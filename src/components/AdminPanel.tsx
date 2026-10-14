@@ -419,7 +419,7 @@ return (
       </div>
 
       {/* Tabs */}
-    <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-none px-5 py-3 border-b border-gold-400/10 shrink-0">
+    <div className="flex gap-2 overflow-x-auto whitespace-nowrap px-5 py-3 border-b border-gold-400/10 w-full [-webkit-overflow-scrolling:touch]">
         {[
          { id: 'products' as Tab, label: 'المنتجات', icon: Package },
 { id: 'categories' as Tab, label: 'الأقسام', icon: Package },
