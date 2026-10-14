@@ -419,7 +419,7 @@ return (
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 px-5 py-3 border-b border-gold-400/10 shrink-0">
+    <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-none px-5 py-3 border-b border-gold-400/10 shrink-0">
         {[
          { id: 'products' as Tab, label: 'المنتجات', icon: Package },
 { id: 'categories' as Tab, label: 'الأقسام', icon: Package },
@@ -435,8 +435,7 @@ return (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition ${tab === t.id ? 'gold-gradient text-ink-900' : 'text-ink-300 hover:bg-ink-700/60'
-                }`}
+              className={`flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${tab === t.id ? 'gold-gradient text-ink-900' : 'text-ink-300 hover:bg-ink-700/60'}`}
             >
               <Icon className="w-4 h-4" />
               {t.label}
