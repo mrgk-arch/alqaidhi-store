@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import type { StoreSettings, Banner } from '../types';
 
@@ -47,7 +47,27 @@ const defaultSlides: HeroSlide[] = [
 export default function HeroCarousel({ settings, banners = [], onBannerClick }: HeroCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    if (distance > 40) {
+      next(); // سحب لليسار -> البنر التالي
+    } else if (distance < -40) {
+      prev(); // سحب لليمين -> البنر السابق
+    }
+  };
 const slides = banners.length > 0
     ? banners.map((b, i) => ({
         id: i + 1,
@@ -79,7 +99,12 @@ const slides = banners.length > 0
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="relative h-[300px] sm:h-[420px] lg:h-[520px] rounded-2xl lg:rounded-[2rem] overflow-hidden luxury-border">
+   <div 
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}
+  className="relative h-[300px] sm:h-[420px] lg:h-[520px] rounded-2xl lg:rounded-[2rem] overflow-hidden luxury-border"
+>
         {slides.map((slide, idx) => (
           <div
           key={slide.id}
@@ -137,25 +162,6 @@ const slides = banners.length > 0
           </div>
         ))}
 
-       <button
-  onClick={(e) => {
-    e.stopPropagation();
-    prev();
-  }}
-  className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 glass-card rounded-full flex items-center justify-center z-20 cursor-pointer"
->
-  <ChevronRight className="w-5 h-5" />
-</button>
-
-<button
-  onClick={(e) => {
-    e.stopPropagation();
-    next();
-  }}
-  className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 glass-card rounded-full flex items-center justify-center z-20 cursor-pointer"
->
-  <ChevronLeft className="w-5 h-5" />
-</button>
 
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {slides.map((_, idx) => (
