@@ -149,7 +149,7 @@ const filteredProducts = products.filter((product) => {
         <div className="my-8 w-full overflow-hidden rounded-2xl shadow-xl">
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
-            navigation={true}
+            navigation={false}
             pagination={{ clickable: true }}
             autoplay={{
               delay: 5000,
