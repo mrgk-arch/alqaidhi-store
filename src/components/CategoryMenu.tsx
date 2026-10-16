@@ -34,7 +34,7 @@ export default function CategoryMenu({ categories, activeCategory, onCategoryCha
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-8 lg:mt-12">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-12 lg:mt-16">
       <div className="flex items-center gap-4 mb-6">
         <div className="h-px flex-1 ornamental-line" />
         <h2 className="font-serif text-lg lg:text-2xl font-bold text-gold-200 text-glow-gold">تسوق حسب القسم</h2>
