@@ -41,7 +41,7 @@ export default function CategoryMenu({ categories, activeCategory, onCategoryCha
         <div className="h-px flex-1 ornamental-line" />
       </div>
 
-      <div className="flex justify-center gap-3 sm:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-3">
+      <div className="flex justify-start sm:justify-center gap-3 sm:gap-5 lg:gap-6 overflow-x-auto no-scrollbar pb-3 px-4">
      {categories.map((cat, idx) => {
           const isActive = activeCategory === cat.slug || activeCategory === cat.name;
           const isHovered = hovered === idx;
