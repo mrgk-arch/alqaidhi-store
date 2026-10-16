@@ -109,9 +109,9 @@ const filteredProducts = products.filter((product) => {
           return (
             <>
               {currentBrand?.image_url && (
-                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/40 mb-3 shadow-lg">
-                  <img src={currentBrand.image_url} alt={currentBrand.name} className="w-full h-full object-cover" />
-                </div>
+             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/40 mb-3 shadow-lg bg-ink-950">
+  <img src={currentBrand?.image_url || currentBrand?.logo} alt={currentBrand?.name} className="w-full h-full object-cover rounded-full" />
+</div>  
               )}
               <h3 className="text-2xl font-bold text-gold-300">{currentBrand?.name || selectedBrandFilter}</h3>
               <p className="text-xs text-ink-300 mt-1">منتجات الماركة المختارة</p>
@@ -139,13 +139,13 @@ const filteredProducts = products.filter((product) => {
                   }}
                   className="group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
                 >
-                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-4 border-amber-500/10 shadow-lg overflow-hidden">
-                    <img
-                      src={brand.image_url || brand.logo}
-                      alt={brand.name}
-                      className="w-full h-full object-contain p-2 relative z-10"
-                    />
-                  </div>
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 border-amber-500/20 group-hover:border-amber-400 group-hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all duration-300 overflow-hidden">
+  <img 
+    src={brand.image_url || brand.logo}
+    alt={brand.name}
+    className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
+  />
+</div>
                   <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400 transition-colors">
                     {brand.name}
                   </h4>
