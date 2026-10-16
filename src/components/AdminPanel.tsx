@@ -15,7 +15,7 @@ interface AdminPanelProps {
 }
 
 type Tab = 'products' | 'categories' | 'videos' | 'banners' | 'brands' | 'settings' | 'coupons';
-const CATEGORIES = ['عطور', 'بخور', 'عينات', 'عروض'];
+
 
 export default function AdminPanel({
   open,
@@ -759,7 +759,11 @@ return (
                   <div>
                     <label className="text-sm text-ink-200 mb-1 block">التصنيف</label>
                     <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-ink-50 focus:outline-none focus:border-gold-400/40">
-                      {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                    {categories && categories.map((c) => (
+  <option key={c.id || c.name} value={c.name}>
+    {c.name}
+  </option>
+))}  
                     </select>
                   </div>
                   <div>
