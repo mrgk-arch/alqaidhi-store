@@ -67,15 +67,19 @@ const mobileSuggestionsRef = useRef<HTMLDivElement>(null);
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 lg:h-20 gap-3">
             {/* Logo */}
-            <div className="flex items-center gap-2.5 shrink-0">
-              <div className="relative w-11 h-11 lg:w-13 lg:h-13 rounded-full overflow-hidden">
-                <img src={LOGO_URL} alt="شعار متجر القيضي" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex flex-col">
-  <h1 className="font-serif text-base sm:text-lg lg:text-xl font-bold gold-text leading-tight">متجر القيضي</h1>
-  <p className="text-[9px] sm:text-[10px] text-gold-300/50 tracking-[0.2em] uppercase">Luxury Perfumes</p>
+       <div className="flex items-center gap-2 shrink-0">
+  <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-amber-500/30">
+    <img src={LOGO_URL} alt="متجر القيضي" className="w-full h-full object-cover" />
+  </div>
+  <div className="flex flex-col">
+    <h1 className="font-serif text-sm sm:text-base lg:text-xl font-bold gold-text leading-tight whitespace-nowrap">
+      متجر القيضي
+    </h1>
+    <p className="hidden sm:block text-[9px] text-gold-300/50 tracking-[0.2em] uppercase">
+      LUXURY PERFUMES
+    </p>
+  </div>
 </div>
-            </div>
 
             {/* Search - Desktop */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md relative" ref={desktopSuggestionsRef}>
