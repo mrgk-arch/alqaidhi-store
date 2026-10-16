@@ -87,51 +87,77 @@ const filteredProducts = products.filter((product) => {
 {/* ========================================================= */}
       {/* قسم الماركات الفخم والدائري - يظهر فقط في قسم العطور */}
       {/* ========================================================= */}
-      {(activeCategory === 'عطور' || activeCategory === 'perfumes') && brands && brands.length > 0 && (
-        <div className="my-12 px-2">
-          <h3 className="text-3xl font-extrabold mb-10 text-center text-amber-400 tracking-tight">
-            استكشف أفخم الماركات العالمية
-          </h3>
-          
-          <div className="flex flex-wrap justify-center gap-8 md:gap-10">
-            {brands
-              .filter(brand => brand.category === 'عطور' || brand.category === activeCategory)
-              .map((brand, idx) => (
-              <div 
-            key={brand.id || idx}
- onClick={() => {
-              // إذا ضغط على نفس الماركة تلغى التصفية، وإذا ضغط أخرى يتم تفعيلها
+{activeCategory === 'عطور' && brands && brands.length > 0 && (
+  <div>
+    {/* إذا اختار الزبون ماركة، نعرض اسمها وشعارها في المنتصف وتحتها سهم الرجوع */}
+    {selectedBrandFilter ? (
+      <div className="flex flex-col items-center justify-center my-8 bg-ink-950/60 p-6 rounded-2xl border border-gold-500/20 relative">
+        {/* زر السهم الصغير في الزاوية للخروج من الماركة */}
+        <button 
+          onClick={() => setSelectedBrandFilter(null)}
+          className="absolute top-4 left-4 bg-ink-900 border border-gold-500/30 text-gold-400 p-2 rounded-full hover:bg-gold-500 hover:text-ink-950 transition-colors flex items-center justify-center"
+          title="الرجوع للماركات"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* جلب بيانات الماركة المختارة لعرض شعارها واسمها */}
+        {(() => {
+          const currentBrand = brands.find((b: any) => String(b.id) === String(selectedBrandFilter) || b.name === selectedBrandFilter);
+          return (
+            <>
+              {currentBrand?.image_url && (
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/40 mb-3 shadow-lg">
+                  <img src={currentBrand.image_url} alt={currentBrand.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <h3 className="text-2xl font-bold text-gold-300">{currentBrand?.name || selectedBrandFilter}</h3>
+              <p className="text-xs text-ink-300 mt-1">منتجات الماركة المختارة</p>
+            </>
+          );
+        })()}
+      </div>
+    ) : (
+      /* إذا لم يختار ماركة، تعرض له قائمة الماركات الدائرية العادية الطبيعية */
+      <div className="my-12 px-2">
+        <h3 className="text-3xl font-extrabold mb-10 text-center text-ink-300 tracking-tight">
+          استكشف أفخم الماركات العالمية
+        </h3>
+        <div className="flex flex-wrap justify-center gap-8 md:gap-10">
+          {brands
+            .filter((brand: any) => brand.category === 'عطور' || brand.category === activeCategory)
+            .map((brand: any, idx: number) => {
               const brandIdentifier = brand.id || brand.name;
-              setSelectedBrandFilter(selectedBrandFilter === brandIdentifier ? null : brandIdentifier);
-            }}
-            className="group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
-          >
-                  {/* حاوية الصورة الدائرية البارزة */}
-                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-4 border-amber-500/10 shadow-[0_0_20px_rgba(217,119,6,0.15)] group-hover:border-amber-500 group-hover:shadow-[0_0_30px_rgba(217,119,6,0.4)] transition-all duration-300 flex items-center justify-center p-2 overflow-hidden">
-                    
-                    {/* خلفية وهج خفيف خلف الشعار */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-amber-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
-                    
-                    {/* صورة الشعار */}
-                    <img 
-                      src={brand.image_url || brand.logo} 
-                      alt={brand.name} 
-                      className="w-full h-full object-contain rounded-full relative z-10 p-2"
+              return (
+                <div
+                  key={brand.id || idx}
+                  onClick={() => {
+                    const brandIdentifier = String(brand.id);
+                    setSelectedBrandFilter(selectedBrandFilter === brandIdentifier ? null : brandIdentifier);
+                  }}
+                  className="group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
+                >
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-4 border-amber-500/10 shadow-lg overflow-hidden">
+                    <img
+                      src={brand.image_url || brand.logo}
+                      alt={brand.name}
+                      className="w-full h-full object-contain p-2 relative z-10"
                     />
                   </div>
-                  
-                  {/* اسم الماركة الفخم */}
-                  <h4 className="mt-5 text-slate-100 font-bold text-base text-center tracking-wide group-hover:text-amber-400 transition-colors duration-200 line-clamp-1">
+                  <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400 transition-colors">
                     {brand.name}
                   </h4>
-                  
-                  {/* خط زخرفي صغير تحت الاسم عند التحويم */}
-                  <div className="w-0 h-0.5 bg-amber-500 mt-1.5 group-hover:w-16 transition-all duration-300 rounded-full"></div>
                 </div>
-              ))}
-          </div>
+              );
+            })}
         </div>
-      )}
+      </div>
+    )}
+  </div>
+)}
+      
       {/* ========================================================= */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {firstHalf.map((product: any, idx: number) => (
