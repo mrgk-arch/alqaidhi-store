@@ -1035,10 +1035,11 @@ return (
                     onChange={(e) => setBrandForm({ ...brandForm, category: e.target.value })}
                     className="w-full bg-ink-800/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm"
                   >
-                    <option value="عطور">عطور</option>
-                    <option value="بخور">بخور</option>
-                    <option value="مينات">مينات</option>
-                    <option value="عروض">عروض</option>
+               {categories && categories.map((c) => (
+  <option key={c.id || c.name} value={c.name}>
+    {c.name}
+  </option>
+))}
                   </select>
                 </div>
                 <div className="flex gap-2 pt-2">
