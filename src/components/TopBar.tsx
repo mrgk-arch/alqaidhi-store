@@ -71,10 +71,10 @@ const mobileSuggestionsRef = useRef<HTMLDivElement>(null);
               <div className="relative w-11 h-11 lg:w-13 lg:h-13 rounded-full overflow-hidden">
                 <img src={LOGO_URL} alt="شعار متجر القيضي" className="w-full h-full object-cover" />
               </div>
-              <div className="hidden sm:block">
-                <h1 className="font-serif text-lg lg:text-xl font-bold gold-text leading-tight">متجر القيضي</h1>
-                <p className="text-[10px] text-gold-300/50 tracking-[0.25em] uppercase">Luxury Perfumes</p>
-              </div>
+              <div className="flex flex-col">
+  <h1 className="font-serif text-base sm:text-lg lg:text-xl font-bold gold-text leading-tight">متجر القيضي</h1>
+  <p className="text-[9px] sm:text-[10px] text-gold-300/50 tracking-[0.2em] uppercase">Luxury Perfumes</p>
+</div>
             </div>
 
             {/* Search - Desktop */}
