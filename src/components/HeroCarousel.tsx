@@ -95,7 +95,7 @@ const slides = banners.length > 0
 
   return (
     <section
-      className="relative max-w-7xl mx-auto px-4 sm:px-6 mt-4"
+  className="relative w-full"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -103,7 +103,7 @@ const slides = banners.length > 0
   onTouchStart={handleTouchStart}
   onTouchMove={handleTouchMove}
   onTouchEnd={handleTouchEnd}
-  className="relative h-[300px] sm:h-[420px] lg:h-[520px] rounded-2xl lg:rounded-[2rem] overflow-hidden luxury-border"
+  className="relative w-full h-[65vh] min-h-[420px] max-h-[650px] overflow-hidden"
 >
         {slides.map((slide, idx) => (
           <div
