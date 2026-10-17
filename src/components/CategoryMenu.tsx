@@ -55,7 +55,7 @@ export default function CategoryMenu({ categories, activeCategory, onCategoryCha
               className="flex flex-col items-center gap-2.5 shrink-0 group"
             >
 <div
-  className={`relative w-[76px] h-[76px] sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden transition-all duration-300 shadow-lg ${
+  className={`relative w-[76px] h-[76px] sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden transition-all duration-300 shadow-lg ${
     isActive
       ? 'ring-4 ring-gold-400 ring-offset-2 ring-offset-ink-900 scale-110 shadow-[0_0_20px_rgba(212,175,55,0.6)]'
       : 'ring-2 ring-gold-400/40 hover:scale-105 hover:ring-gold-400'
@@ -64,7 +64,7 @@ export default function CategoryMenu({ categories, activeCategory, onCategoryCha
   <img
     src={cat.image_url}
     alt={cat.name}
-    className="w-full h-full object-cover rounded-full transition-transform duration-500 group-hover:scale-110"
+    className="w-full h-full object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110"
   />
 </div>
               <span
