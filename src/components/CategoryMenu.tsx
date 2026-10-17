@@ -64,7 +64,7 @@ export default function CategoryMenu({ categories, activeCategory, onCategoryCha
   <img
     src={cat.image_url}
     alt={cat.name}
-    className="w-full h-full object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110"
+    className="w-full h-full object-contain rounded-2xl transition-transform duration-500 group-hover:scale-110"
   />
 </div>
               <span
