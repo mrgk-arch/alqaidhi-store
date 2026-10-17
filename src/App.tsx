@@ -176,12 +176,14 @@ export default function App() {
           onAccountClick={() => setAuthOpen(true)}
         />
 
-        <HeroCarousel
-          settings={settings}
-          banners={banners.filter((b) => b.position === 'hero')}
-          onBannerClick={handleBannerClick}
-        />
+   <HeroCarousel 
+  settings={settings}
+  banners={banners.filter((b) => b.position === 'hero')}
+  onBannerClick={handleBannerClick}
+/>
 
+{/* فيديوهات ترويجية أولى تحت البنر الرئيسي */}
+<VideoSection videos={videos} />
         <FeaturesBar />
 
         <div id="categories-section">
