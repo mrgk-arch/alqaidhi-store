@@ -51,7 +51,7 @@ export default function AdminPanel({
   });
 
   // Video form state
-  const [videoForm, setVideoForm] = useState({ title: '', description: '', video_url: '', sort_order: '0' });
+  const [videoForm, setVideoForm] = useState({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
   const [showVideoForm, setShowVideoForm] = useState(false);
 
   // Settings form state
@@ -284,16 +284,17 @@ const handleDeleteProduct = async (id: string) => {
 const handleSaveVideo = async () => {
   if (!videoForm.title.trim() || !videoForm.video_url.trim()) return;
   setSaving(true);
-  const data = {
-    title: videoForm.title.trim(),
-    description: videoForm.description || null,
-    video_url: videoForm.video_url.trim(),
-    sort_order: parseInt(videoForm.sort_order) || 0,
-    is_active: true,
-  };
+ const data = {
+  title: videoForm.title.trim(),
+  description: videoForm.description || null,
+  video_url: videoForm.video_url.trim(),
+  position: videoForm.position || 'hero', // إضافة موقع الفيديو هنا
+  sort_order: parseInt(videoForm.sort_order) || 0,
+  is_active: true,
+};
   await supabase.from('videos').insert(data);
   setSaving(false);
-  setVideoForm({ title: '', description: '', video_url: '', sort_order: '0' });
+  setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
   setShowVideoForm(false);
   onVideosChanged();
 };
@@ -1019,6 +1020,7 @@ return (
                     className="w-full bg-ink-800/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm"
                   />
                 </div>
+
                 <div>
                   <label className="text-sm text-ink-200 mb-1 block">صورة الماركة</label>
                   <MediaUploader
@@ -1121,6 +1123,17 @@ return (
                   <label className="text-sm text-ink-200 mb-1 block">الوصف</label>
                   <input type="text" value={videoForm.description} onChange={(e) => setVideoForm({ ...videoForm, description: e.target.value })} placeholder="وصف الفيديو" className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-ink-50 focus:outline-none focus:border-gold-400/40" />
                 </div>
+                <div>
+  <label className="text-sm text-ink-200 mb-1 block">موقع عرض الفيديو</label>
+  <select
+    value={videoForm.position || 'hero'}
+    onChange={(e) => setVideoForm({ ...videoForm, position: e.target.value })}
+    className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-gold-400/40"
+  >
+    <option value="hero">في الأعلى (تحت البنر الرئيسي)</option>
+    <option value="middle">في الوسط (تحت البنرات الوسطى)</option>
+  </select>
+</div>
                 <MediaUploader
                   value={videoForm.video_url}
                   onChange={(url) => setVideoForm({ ...videoForm, video_url: url })}
@@ -1132,7 +1145,7 @@ return (
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     حفظ
                   </button>
-                  <button onClick={() => { setShowVideoForm(false); setVideoForm({ title: '', description: '', video_url: '', sort_order: '0' }); }} className="px-6 py-2.5 bg-ink-700 text-ink-200 rounded-xl text-sm hover:bg-ink-600 transition-colors">
+                  <button onClick={() => { setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' }); }} className="px-6 py-2.5 bg-ink-700 text-ink-200 rounded-xl text-sm hover:bg-ink-600 transition-colors">
                     إلغاء
                   </button>
                 </div>
