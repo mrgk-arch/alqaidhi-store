@@ -118,9 +118,14 @@ const slides = banners.length > 0
             idx === current ? 'opacity-100 scale-100' : 'opacity-0 scale-110 pointer-events-none'
          } ${(slide as any).originalBanner?.product_id ? 'cursor-pointer' : ''}`}
         >
-            <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-l from-ink-900/95 via-ink-900/60 to-ink-900/20" />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-transparent to-ink-900/30" />
+          <img 
+  src={slide.image} 
+  alt={slide.title} 
+  className="w-full h-full object-cover object-center" 
+/>
+{/* طبقة تدرج خفيفة جداً فقط لإبراز النص دون إخفاء الصورة */}
+<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />  
+            
 
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-lg px-6 sm:px-10 lg:px-16">
