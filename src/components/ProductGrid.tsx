@@ -199,18 +199,8 @@ const filteredProducts = products.filter((product) => {
                     alt={banner.title || 'Banner'}
                     className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                   />
-                  <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
-                    <h2 className="text-2xl md:text-3xl font-bold">
-                      {banner.title || ''}
-                    </h2>
-                    <button
-                      type="button"
-                      className="mt-6 inline-block rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-gold-600 transition-colors pointer-events-auto cursor-pointer"
-                    >
-                      تسوق الآن
-                    </button>
-                  </div>
+                 
+          
                 </div>
               </SwiperSlide>
             ))}
