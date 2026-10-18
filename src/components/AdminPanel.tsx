@@ -292,9 +292,8 @@ const handleSaveVideo = async () => {
   }
 
   setSaving(true);
-  const data = {
+const data = {
     title: videoForm.title.trim(),
-    description: videoForm.description || null,
     video_url: videoForm.video_url.trim(),
     position: videoForm.position || 'hero',
     sort_order: parseInt(videoForm.sort_order) || 0,
