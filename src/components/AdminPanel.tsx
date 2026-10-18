@@ -282,21 +282,35 @@ const handleDeleteProduct = async (id: string) => {
 };
 
 const handleSaveVideo = async () => {
-  if (!videoForm.title.trim() || !videoForm.video_url.trim()) return;
+  if (!videoForm.title.trim()) {
+    alert("يرجى إدخال عنوان الفيديو");
+    return;
+  }
+  if (!videoForm.video_url.trim()) {
+    alert("يرجى رفع ملف الفيديو أو إدخال الرابط أولاً والانتظار حتى يكتمل الرفع");
+    return;
+  }
+
   setSaving(true);
- const data = {
-  title: videoForm.title.trim(),
-  description: videoForm.description || null,
-  video_url: videoForm.video_url.trim(),
-  position: videoForm.position || 'hero', // إضافة موقع الفيديو هنا
-  sort_order: parseInt(videoForm.sort_order) || 0,
-  is_active: true,
-};
-  await supabase.from('videos').insert(data);
+  const data = {
+    title: videoForm.title.trim(),
+    description: videoForm.description || null,
+    video_url: videoForm.video_url.trim(),
+    position: videoForm.position || 'hero',
+    sort_order: parseInt(videoForm.sort_order) || 0,
+    is_active: true,
+  };
+
+  const { error } = await supabase.from('videos').insert([data]);
   setSaving(false);
-  setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
-  setShowVideoForm(false);
-  onVideosChanged();
+
+  if (error) {
+    alert('حدث خطأ أثناء حفظ الفيديو: ' + error.message);
+  } else {
+    setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
+    setShowVideoForm(false);
+    if (onVideosChanged) onVideosChanged();
+  }
 };
 
 const handleDeleteVideo = async (id: string) => {
