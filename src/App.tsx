@@ -183,16 +183,30 @@ export default function App() {
   onBannerClick={handleBannerClick}
 />
 {/* قسم الفيديو التفاعلي الفاخر */}
-      {videos && videos.length > 0 && (
+     {videos && videos.length > 0 && (
         <FeaturedVideoShowcase
           videoUrl={videos[0].video_url}
           title={videos[0].title || 'عطر جلو 100مل أو دو بارفيوم'}
           price="178"
           productImage="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=300"
+          rating={5.0}
+          reviewsCount={128}
           onAddToCart={() => {
-            alert('تمت إضافة العطر إلى السلة');
+            handleAddToCart({
+              id: videos[0].id || '1',
+              name: videos[0].title || 'عطر جلو',
+              price: 178,
+              imageUrl: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=300',
+              category: 'عطور'
+            } as any);
+            showToast('تمت إضافة المنتج إلى السلة بنجاح');
           }}
-          onProductClick={() => {}}
+          onProductClick={() => {
+            const matchedProduct = products.find(p => p.name.includes(videos[0].title));
+            if (matchedProduct) {
+              setSelectedProduct(matchedProduct);
+            }
+          }}
         />
       )}
 {/* فيديوهات ترويجية أولى تحت البنر الرئيسي */}
