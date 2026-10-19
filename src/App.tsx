@@ -9,6 +9,7 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import VideoSection from './components/VideoSection';
 import AdminPanel from './components/AdminPanel';
+import { FeaturedVideoShowcase } from './components/FeaturedVideoShowcase';
 import FeaturesBar from './components/FeaturesBar';
 import ToastContainer from './components/Toast';
 import type { ToastData } from './components/Toast';
@@ -181,7 +182,19 @@ export default function App() {
   banners={banners.filter((b) => b.position === 'hero')}
   onBannerClick={handleBannerClick}
 />
-
+{/* قسم الفيديو التفاعلي الفاخر */}
+      {videos && videos.length > 0 && (
+        <FeaturedVideoShowcase
+          videoUrl={videos[0].video_url}
+          title={videos[0].title || 'عطر جلو 100مل أو دو بارفيوم'}
+          price="178"
+          productImage="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=300"
+          onAddToCart={() => {
+            alert('تمت إضافة العطر إلى السلة');
+          }}
+          onProductClick={() => {}}
+        />
+      )}
 {/* فيديوهات ترويجية أولى تحت البنر الرئيسي */}
 <VideoSection videos={videos} />
         <FeaturesBar />
