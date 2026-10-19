@@ -1158,17 +1158,15 @@ return (
     />
   </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label className="block text-sm text-slate-300 mb-1">رابط الفيديو</label>
-      <input
-        type="url"
-        value={showcaseForm.video_url}
-        onChange={(e) => setShowcaseForm({ ...showcaseForm, video_url: e.target.value })}
-        placeholder="https://..."
-        className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
-      />
-    </div>
+  <div>
+    <label className="block text-sm text-slate-300 mb-1">رفع ملف الفيديو</label>
+    <MediaUploader
+      value={showcaseForm.video_url}
+      onChange={(url: string) => setShowcaseForm({ ...showcaseForm, video_url: url })}
+      bucket="products"
+      label="رفع ملف الفيديو من الجهاز"
+    />
+  </div>
     <div>
       <label className="block text-sm text-slate-300 mb-1">السعر (ر.س)</label>
       <input
@@ -1182,13 +1180,12 @@ return (
   </div>
 
   <div>
-    <label className="block text-sm text-slate-300 mb-1">رابط صورة المنتج</label>
-    <input
-      type="url"
+    <label className="block text-sm text-slate-300 mb-1">رفع صورة المنتج</label>
+    <MediaUploader
       value={showcaseForm.product_image}
-      onChange={(e) => setShowcaseForm({ ...showcaseForm, product_image: e.target.value })}
-      placeholder="https://..."
-      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+      onChange={(url: string) => setShowcaseForm({ ...showcaseForm, product_image: url })}
+      bucket="products"
+      label="رفع صورة المنتج من الجهاز"
     />
   </div>
 
@@ -1200,7 +1197,7 @@ return (
   >
     {saving ? 'جاري الحفظ...' : 'حفظ ونشر الفيديو الفاخر'}
   </button>
-</div>
+  
             {!showVideoForm ? (
               <>
                 <button onClick={() => setShowVideoForm(true)} className="w-full flex items-center justify-center gap-2 py-2.5 gold-gradient text-ink-900 font-bold rounded-xl text-sm hover:scale-[1.01] transition-transform">
