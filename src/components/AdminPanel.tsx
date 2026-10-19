@@ -320,9 +320,10 @@ const data = {
     if (onVideosChanged) onVideosChanged();
   }
 };
-const handleSaveShowcase = async () => {
-    if (!showcaseForm.title.trim() || !showcaseForm.video_url.trim()) {
-      alert('يرجى إدخال العنوان والرابط على الأقل');
+const handleSaveShowcase = async (e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+
+  if (!showcaseForm.title.trim() || !showcaseForm.video_url.trim()) {
       return;
     }
     setSaving(true);
