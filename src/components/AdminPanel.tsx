@@ -360,6 +360,14 @@ const handleDeleteVideo = async (id: string) => {
   onVideosChanged();
 };
 
+const handleDeleteShowcase = async (id: string) => {
+  if (!confirm('هل أنت متأكد من حذف هذا الفيديو الفاخر؟')) return;
+  const { error } = await supabase.from('featured_video_showcase').delete().eq('id', id);
+  if (!error && onVideosChanged) {
+    onVideosChanged();
+  }
+};
+
 const handleSaveBanner = async () => {
   if (!bannerForm.image_url.trim()) return;
   setSaving(true);

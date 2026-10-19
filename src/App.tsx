@@ -37,7 +37,7 @@ export default function App() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [featuredShowcase, setFeaturedShowcase] = useState<any>(null);
+  const [featuredShowcases, setFeaturedShowcases] = useState<any[]>([]);
   const fetchBanners = useCallback(async () => {
     const { data, error } = await supabase.from('banners').select('*');
     if (data && !error) {
@@ -60,21 +60,20 @@ export default function App() {
   }, []);
 
  const fetchFeaturedShowcase = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('featured_video_showcase')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1);
+  const { data, error } = await supabase
+    .from('featured_video_showcase')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-    if (data && data.length > 0) {
-      setFeaturedShowcase(data[0]);
-    }
-  }, []);
+  if (data && !error) {
+    setFeaturedShowcases(data);
+  }
+}, []);
 
  useEffect(() => {
   fetchCategories();
-  fetchBanners();
-  fetchBrands();
+  fetchBanners(); 
+  fetchBrands(); 
   fetchFeaturedShowcase(); // <--- أضف هذا السطر هنا
 
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -195,33 +194,39 @@ export default function App() {
   banners={banners.filter((b) => b.position === 'hero')}
   onBannerClick={handleBannerClick}
 />
-{/* قسم الفيديو التفاعلي الفاخر */}
-  {featuredShowcase && (
-        <FeaturedVideoShowcase
-          videoUrl={featuredShowcase.video_url}
-          title={featuredShowcase.title}
-          price={featuredShowcase.price}
-          productImage={featuredShowcase.product_image}
-          rating={featuredShowcase.rating || 5.0}
-          reviewsCount={featuredShowcase.reviews_count || 128}
-          onAddToCart={() => {
-            handleAddToCart({
-              id: featuredShowcase.id,
-              name: featuredShowcase.title,
-              price: parseFloat(featuredShowcase.price) || 178,
-              imageUrl: featuredShowcase.product_image,
-              category: 'عطور'
-            } as any);
-            showToast('تمت إضافة المنتج إلى السلة بنجاح');
-          }}
-          onProductClick={() => {
-            const matchedProduct = products.find(p => p.name.includes(featuredShowcase.title));
-            if (matchedProduct) {
-              setSelectedProduct(matchedProduct);
-            }
-          }}
-        />
-      )}   
+ {/* قسم الفيديوهات التفاعلية الفاخرة - شريط أفقي */}
+{featuredShowcases.length > 0 && (
+  <div className="py-4">
+    <h2 className="text-xl font-bold text-gold-400 px-4 mb-3">الأكثر مبيعاً</h2>
+    <div className="flex gap-4 overflow-x-auto px-4 pb-4 scrollbar-hide snap-x">
+      {featuredShowcases.map((item) => (
+        <div key={item.id} className="min-w-[280px] max-w-[300px] flex-shrink-0 snap-start">
+       <FeaturedVideoShowcase
+  videoUrl={item.video_url}
+  title={item.title}
+  price={item.price}
+  productImage={item.product_image}
+  rating={item.rating || 5.0}
+  reviewsCount={item.reviews_count || 128}
+  onAddToCart={() =>
+    handleAddToCart({
+      id: item.id,
+      name: item.title,
+      price: parseFloat(item.price) || 178,
+      imageUrl: item.product_image,
+      category: 'عطور'
+    } as any)
+  }
+  onProductClick={() => {
+    const matchedProduct = products.find(p => p.name.includes(item.title));
+    if (matchedProduct) setSelectedProduct(matchedProduct);
+  }}
+/>   
+        </div>
+      ))}
+    </div>
+  </div>
+)}  
 {/* فيديوهات ترويجية أولى تحت البنر الرئيسي */}
 <VideoSection videos={videos} />
         <FeaturesBar />
