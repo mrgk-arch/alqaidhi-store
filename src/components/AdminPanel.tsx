@@ -1192,7 +1192,7 @@ return (
 
   <button
     type="button"
-    onClick={handleSaveShowcase}
+   onClick={(e) => handleSaveShowcase(e)}
     disabled={saving}
     className="w-full py-3 bg-gold-500 hover:bg-gold-600 text-slate-950 font-bold rounded-xl transition"
   >

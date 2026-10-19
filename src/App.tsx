@@ -71,10 +71,11 @@ export default function App() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCategories();
-    fetchBanners();
-    fetchBrands();
+ useEffect(() => {
+  fetchCategories();
+  fetchBanners();
+  fetchBrands();
+  fetchFeaturedShowcase(); // <--- أضف هذا السطر هنا
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
