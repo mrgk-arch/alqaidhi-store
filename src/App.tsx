@@ -37,7 +37,7 @@ export default function App() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-
+  const [featuredShowcase, setFeaturedShowcase] = useState<any>(null);
   const fetchBanners = useCallback(async () => {
     const { data, error } = await supabase.from('banners').select('*');
     if (data && !error) {
@@ -56,6 +56,18 @@ export default function App() {
     const { data, error } = await supabase.from('categories').select('*');
     if (data && !error) {
       setCategories(data);
+    }
+  }, []);
+
+ const fetchFeaturedShowcase = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('featured_video_showcase')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (data && data.length > 0) {
+      setFeaturedShowcase(data[0]);
     }
   }, []);
 
@@ -183,32 +195,32 @@ export default function App() {
   onBannerClick={handleBannerClick}
 />
 {/* قسم الفيديو التفاعلي الفاخر */}
-     {videos && videos.length > 0 && (
+  {featuredShowcase && (
         <FeaturedVideoShowcase
-          videoUrl={videos[0].video_url}
-          title={videos[0].title || 'عطر جلو 100مل أو دو بارفيوم'}
-          price="178"
-          productImage="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=300"
-          rating={5.0}
-          reviewsCount={128}
+          videoUrl={featuredShowcase.video_url}
+          title={featuredShowcase.title}
+          price={featuredShowcase.price}
+          productImage={featuredShowcase.product_image}
+          rating={featuredShowcase.rating || 5.0}
+          reviewsCount={featuredShowcase.reviews_count || 128}
           onAddToCart={() => {
             handleAddToCart({
-              id: videos[0].id || '1',
-              name: videos[0].title || 'عطر جلو',
-              price: 178,
-              imageUrl: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=300',
+              id: featuredShowcase.id,
+              name: featuredShowcase.title,
+              price: parseFloat(featuredShowcase.price) || 178,
+              imageUrl: featuredShowcase.product_image,
               category: 'عطور'
             } as any);
             showToast('تمت إضافة المنتج إلى السلة بنجاح');
           }}
           onProductClick={() => {
-            const matchedProduct = products.find(p => p.name.includes(videos[0].title));
+            const matchedProduct = products.find(p => p.name.includes(featuredShowcase.title));
             if (matchedProduct) {
               setSelectedProduct(matchedProduct);
             }
           }}
         />
-      )}
+      )}   
 {/* فيديوهات ترويجية أولى تحت البنر الرئيسي */}
 <VideoSection videos={videos} />
         <FeaturesBar />

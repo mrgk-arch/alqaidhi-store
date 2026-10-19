@@ -53,7 +53,16 @@ export default function AdminPanel({
   // Video form state
   const [videoForm, setVideoForm] = useState({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
   const [showVideoForm, setShowVideoForm] = useState(false);
-
+// Featured Showcase form state
+  const [showcaseForm, setShowcaseForm] = useState({
+    title: '',
+    video_url: '',
+    price: '',
+    product_image: '',
+    rating: 5.0,
+    reviews_count: 128
+  });
+  const [isSavingShowcase, setIsSavingShowcase] = useState(false);
   // Settings form state
   const [settingsForm, setSettingsForm] = useState({
     whatsapp_number: '967779392061',
@@ -311,6 +320,38 @@ const data = {
     if (onVideosChanged) onVideosChanged();
   }
 };
+const handleSaveShowcase = async () => {
+    if (!showcaseForm.title.trim() || !showcaseForm.video_url.trim()) {
+      alert('يرجى إدخال العنوان والرابط على الأقل');
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from('featured_video_showcase').insert([
+      {
+        title: showcaseForm.title.trim(),
+        video_url: showcaseForm.video_url.trim(),
+        price: showcaseForm.price || '178',
+        product_image: showcaseForm.product_image,
+        rating: Number(showcaseForm.rating) || 5.0,
+        reviews_count: Number(showcaseForm.reviews_count) || 128
+      }
+    ]);
+    setSaving(false);
+    if (error) {
+      alert('حدث خطأ أثناء حفظ الفيديو الفاخر: ' + error.message);
+    } else {
+      alert('تم حفظ الفيديو الفاخر بنجاح!');
+      setShowcaseForm({
+        title: '',
+        video_url: '',
+        price: '',
+        product_image: '',
+        rating: 5.0,
+        reviews_count: 128
+      });
+      if (onVideosChanged) onVideosChanged();
+    }
+  };
 
 const handleDeleteVideo = async (id: string) => {
   if (!confirm('هل أنت متأكد من حذف هذا الفيديو؟')) return;
@@ -1103,6 +1144,63 @@ return (
         {/* Videos Tab */}
         {tab === 'videos' && (
           <div className="space-y-4">
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-gold-500/20 mb-8 space-y-4">
+  <h3 className="text-xl font-bold text-gold-400 mb-2">🎬 إدارة الفيديو الفاخر المميز (أعلى الموقع)</h3>
+  
+  <div>
+    <label className="block text-sm text-slate-300 mb-1">عنوان العطر / المنتج</label>
+    <input
+      type="text"
+      value={showcaseForm.title}
+      onChange={(e) => setShowcaseForm({ ...showcaseForm, title: e.target.value })}
+      placeholder="مثال: عطر جلو 100مل أو دو بارفيوم"
+      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+    />
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm text-slate-300 mb-1">رابط الفيديو</label>
+      <input
+        type="url"
+        value={showcaseForm.video_url}
+        onChange={(e) => setShowcaseForm({ ...showcaseForm, video_url: e.target.value })}
+        placeholder="https://..."
+        className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+      />
+    </div>
+    <div>
+      <label className="block text-sm text-slate-300 mb-1">السعر (ر.س)</label>
+      <input
+        type="text"
+        value={showcaseForm.price}
+        onChange={(e) => setShowcaseForm({ ...showcaseForm, price: e.target.value })}
+        placeholder="178"
+        className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label className="block text-sm text-slate-300 mb-1">رابط صورة المنتج</label>
+    <input
+      type="url"
+      value={showcaseForm.product_image}
+      onChange={(e) => setShowcaseForm({ ...showcaseForm, product_image: e.target.value })}
+      placeholder="https://..."
+      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+    />
+  </div>
+
+  <button
+    type="button"
+    onClick={handleSaveShowcase}
+    disabled={saving}
+    className="w-full py-3 bg-gold-500 hover:bg-gold-600 text-slate-950 font-bold rounded-xl transition"
+  >
+    {saving ? 'جاري الحفظ...' : 'حفظ ونشر الفيديو الفاخر'}
+  </button>
+</div>
             {!showVideoForm ? (
               <>
                 <button onClick={() => setShowVideoForm(true)} className="w-full flex items-center justify-center gap-2 py-2.5 gold-gradient text-ink-900 font-bold rounded-xl text-sm hover:scale-[1.01] transition-transform">
