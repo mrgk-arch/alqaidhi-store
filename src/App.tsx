@@ -71,19 +71,18 @@ export default function App() {
   }
 }, []);
 
- useEffect(() => {
-  fetchCategories();
-  fetchBanners(); 
-  fetchBrands(); 
-  fetchFeaturedShowcase(); // <--- أضف هذا السطر هنا
+useEffect(() => {
+    fetchCategories();
+    fetchBanners();
+    fetchBrands();
+    fetchFeaturedShowcase();
 
-  useEffect(() => {
-  const hasVisited = localStorage.getItem('has_visited_store');
-  if (!hasVisited && !user) {
-    setAuthOpen(true);
-    localStorage.setItem('has_visited_store', 'true');
-  }
-}, [user]);
+    // فحص الزائر الجديد هنا داخل نفس الـ useEffect الأساسية
+    const hasVisited = localStorage.getItem('has_visited_store');
+    if (!hasVisited && !user) {
+      setAuthOpen(true);
+      localStorage.setItem('has_visited_store', 'true');
+    }
 
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
@@ -94,7 +93,7 @@ export default function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchCategories, fetchBanners, fetchBrands]);
+  }, [fetchCategories, fetchBanners, fetchBrands, user]);
 
   const { products, loading, refetch: refetchProducts } = useProducts();
   const videos = useVideos();
