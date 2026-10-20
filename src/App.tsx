@@ -17,7 +17,7 @@ import type { Product, Banner } from './types';
 import { useCart } from './useCart';
 import { useProducts, useVideos, useStoreSettings } from './useStore';
 import { supabase } from './supabaseClient';
-import AuthModal from './components/AuthModal';
+import { AuthModal } from './components/AuthModal';
 import { CustomerProfileModal } from './components/CustomerProfileModal';
 import { ProductDetails } from './components/ProductDetails';
 import InstallPWA from './components/InstallPWA';
