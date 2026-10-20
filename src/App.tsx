@@ -77,6 +77,14 @@ export default function App() {
   fetchBrands(); 
   fetchFeaturedShowcase(); // <--- أضف هذا السطر هنا
 
+  useEffect(() => {
+  const hasVisited = localStorage.getItem('has_visited_store');
+  if (!hasVisited && !user) {
+    setAuthOpen(true);
+    localStorage.setItem('has_visited_store', 'true');
+  }
+}, [user]);
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
@@ -181,14 +189,20 @@ export default function App() {
       </div>
 
       <div className="relative">
-      <TopBar
-          cartCount={totalItems}
-          onCartClick={() => setCartOpen(true)}
-          onSearch={(query) => setSearchQuery(query)}
-          onAdminClick={handleAdminClick}
-          products={products}
-          onAccountClick={() => setAuthOpen(true)}
-        />
+    <TopBar
+  cartCount={totalItems}
+  onCartClick={() => setCartOpen(true)}
+  onSearch={(query) => setSearchQuery(query)}
+  onAdminClick={handleAdminClick}
+  products={products}
+  onAccountClick={() => {
+    if (!user) {
+      setAuthOpen(true);
+    } else {
+      setActiveNav('account');
+    }
+  }}
+/>
 
    <HeroCarousel 
   settings={settings}
@@ -297,7 +311,7 @@ export default function App() {
       </div>
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
-      
+
 <CustomerProfileModal 
   isOpen={activeNav === 'account' && !!user} 
   onClose={() => setActiveNav('home')} 
