@@ -18,6 +18,7 @@ import { useCart } from './useCart';
 import { useProducts, useVideos, useStoreSettings } from './useStore';
 import { supabase } from './supabaseClient';
 import AuthModal from './components/AuthModal';
+import { CustomerProfileModal } from './components/CustomerProfileModal';
 import { ProductDetails } from './components/ProductDetails';
 import InstallPWA from './components/InstallPWA';
 type NavigationView = 'home' | 'categories' | 'offers' | 'cart' | 'account';
@@ -296,7 +297,12 @@ export default function App() {
       </div>
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
-
+      
+<CustomerProfileModal 
+  isOpen={activeNav === 'account' && !!user} 
+  onClose={() => setActiveNav('home')} 
+  user={user} 
+/>
       <AuthModal 
         isOpen={authOpen} 
         onClose={() => setAuthOpen(false)} 
