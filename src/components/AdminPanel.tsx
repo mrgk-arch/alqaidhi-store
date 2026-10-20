@@ -54,14 +54,17 @@ export default function AdminPanel({
   const [videoForm, setVideoForm] = useState({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
   const [showVideoForm, setShowVideoForm] = useState(false);
 // Featured Showcase form state
-  const [showcaseForm, setShowcaseForm] = useState({
-    title: '',
-    video_url: '',
-    price: '',
-    product_image: '',
-    rating: 5.0,
-    reviews_count: 128
-  });
+ const [showcaseForm, setShowcaseForm] = useState({
+  title: '',
+  video_url: '',
+  price: '',
+  original_price: '',
+  brand_id: '',
+  product_id: '',
+  product_image: '',
+  rating: 5.0,
+  reviews_count: 128
+});
   const [isSavingShowcase, setIsSavingShowcase] = useState(false);
   // Settings form state
   const [settingsForm, setSettingsForm] = useState({
@@ -152,6 +155,21 @@ const handleDeleteCoupon = async (id: string) => {
     alert('حدث خطأ أثناء حذف الكوبون: ' + error.message);
   }
 };
+
+// جلب الفيديوهات الفاخرة من قاعدة البيانات
+const [featuredShowcases, setFeaturedShowcases] = useState<any[]>([]);
+
+const fetchFeaturedShowcases = async () => {
+  const { data } = await supabase.from('featured_video_showcase').select('*').order('created_at', { ascending: false });
+  if (data) setFeaturedShowcases(data);
+};
+
+useEffect(() => {
+  if ((tab as string) === 'featured_showcase') {
+    fetchFeaturedShowcases();
+  }
+}, [tab]);
+
 // جلب الأقسام عند التحميل
 useEffect(() => {
     supabase.from('categories').select('*').then(({ data }) => {
@@ -321,22 +339,26 @@ const data = {
   }
 };
 const handleSaveShowcase = async (e?: React.FormEvent) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  if (!showcaseForm.title.trim() || !showcaseForm.video_url.trim()) {
+    if (!showcaseForm.title.trim() || !showcaseForm.video_url.trim()) {
       return;
     }
+
     setSaving(true);
     const { error } = await supabase.from('featured_video_showcase').insert([
       {
         title: showcaseForm.title.trim(),
         video_url: showcaseForm.video_url.trim(),
         price: showcaseForm.price || '178',
+        original_price: showcaseForm.original_price || null,
+        brand_id: showcaseForm.brand_id || null,
         product_image: showcaseForm.product_image,
         rating: Number(showcaseForm.rating) || 5.0,
         reviews_count: Number(showcaseForm.reviews_count) || 128
       }
     ]);
+
     setSaving(false);
     if (error) {
       alert('حدث خطأ أثناء حفظ الفيديو الفاخر: ' + error.message);
@@ -346,6 +368,9 @@ const handleSaveShowcase = async (e?: React.FormEvent) => {
         title: '',
         video_url: '',
         price: '',
+        original_price: '',
+        brand_id: '',
+        product_id: '',
         product_image: '',
         rating: 5.0,
         reviews_count: 128
@@ -489,6 +514,7 @@ return (
 { id: 'categories' as Tab, label: 'الأقسام', icon: Package },
 { id: 'videos' as Tab, label: 'الفيديوهات', icon: VideoIcon },
 { id: 'banners' as Tab, label: 'البنرات', icon: ImageIcon },
+{ id: 'featured_showcase', label: 'الفيديوهات الفاخرة', icon: VideoIcon },
 { id: 'brands' as Tab, label: 'الماركات', icon: Package },
 { id: 'settings' as Tab, label: 'الإعدادات', icon: Settings },
 { id: 'coupons' as Tab, label: 'الكوبونات', icon: Ticket },
@@ -498,7 +524,7 @@ return (
           return (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => setTab(t.id as Tab)}
               className={`flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${tab === t.id ? 'gold-gradient text-ink-900' : 'text-ink-300 hover:bg-ink-700/60'}`}
             >
               <Icon className="w-4 h-4" />
@@ -764,6 +790,142 @@ return (
         {bankAccounts.length === 0 && (
           <p className="text-slate-400 text-xs text-center py-4">لا توجد حسابات بنكية مضافة حالياً</p>
         )}
+      </div>
+    </div>
+  </div>
+)}
+{/* Featured Showcase Tab Content */}
+{(tab as string) === 'featured_showcase' && (
+  <div className="space-y-6">
+    <div className="bg-slate-900/60 p-6 rounded-2xl border border-amber-500/25 space-y-4">
+      <h3 className="text-lg font-bold text-amber-300 flex items-center gap-2">
+        🎬 إدارة الفيديوهات الفاخرة المميزة
+      </h3>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm text-slate-200 mb-1">عنوان العطر / المنتج</label>
+          <input
+            type="text"
+            value={showcaseForm.title}
+            onChange={(e) => setShowcaseForm({ ...showcaseForm, title: e.target.value })}
+            placeholder="مثال: عطر جلو 100مل أو دو بارفيوم"
+            className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm text-slate-200 mb-1">الماركة (اختياري)</label>
+            <select
+              value={showcaseForm.brand_id}
+              onChange={(e) => setShowcaseForm({ ...showcaseForm, brand_id: e.target.value })}
+              className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+            >
+              <option value="">اختر الماركة</option>
+              {brands?.map((b: any) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm text-slate-200 mb-1">ربط بعطر معين</label>
+            <select
+              value={showcaseForm.product_id}
+              onChange={(e) => {
+                const prod = products.find((p: any) => p.id === e.target.value);
+             setShowcaseForm(({
+    ...showcaseForm,
+    product_id: e.target.value,
+    title: prod ? prod.name : showcaseForm.title,
+    price: prod ? prod.price.toString() : showcaseForm.price,
+    product_image: prod ? prod.image_url : showcaseForm.product_image || ''
+  } as any));
+              }}
+              className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+            >
+              <option value="">اختر العطر المرتبط</option>
+              {products?.map((p: any) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm text-slate-200 mb-1">السعر الحالي (ر.س)</label>
+            <input
+              type="number"
+              value={showcaseForm.price}
+              onChange={(e) => setShowcaseForm({ ...showcaseForm, price: e.target.value })}
+              placeholder="178"
+              className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-slate-200 mb-1">السعر القديم / قبل الخصم</label>
+            <input
+              type="number"
+              value={showcaseForm.original_price}
+              onChange={(e) => setShowcaseForm({ ...showcaseForm, original_price: e.target.value })}
+              placeholder="250"
+              className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm text-slate-200 mb-1">رابط أو ملف الفيديو</label>
+          <input
+            type="text"
+            value={showcaseForm.video_url}
+            onChange={(e) => setShowcaseForm({ ...showcaseForm, video_url: e.target.value })}
+            placeholder="رابط الفيديو المباشر أو ارفعه"
+            className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => handleSaveShowcase()}
+          className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition-all text-sm"
+        >
+          حفظ ونشر الفيديو الفاخر
+        </button>
+      </div>
+    </div>
+
+    {/* قائمة الفيديوهات المضافة للحذف */}
+    <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 space-y-3">
+      <h4 className="text-md font-bold text-slate-200">الفيديوهات الفاخرة المضافة حالياً</h4>
+      <div className="space-y-2">
+        {featuredShowcases?.map((item: any) => (
+          <div key={item.id} className="flex items-center justify-between bg-slate-800/40 p-3 rounded-xl border border-slate-700">
+            <div className="flex items-center gap-3">
+              {item.product_image && (
+                <img src={item.product_image} alt={item.title} className="w-12 h-12 object-cover rounded-lg" />
+              )}
+              <div>
+                <p className="font-bold text-slate-200 text-sm">{item.title}</p>
+                <div className="flex gap-2 text-xs items-center mt-0.5">
+                  <span className="text-amber-400 font-bold">{item.price} ر.س</span>
+                  {item.original_price && (
+                    <span className="text-slate-500 line-through">{item.original_price} ر.س</span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleDeleteShowcase(item.id)}
+              className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            >
+              🗑️
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   </div>
