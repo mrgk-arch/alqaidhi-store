@@ -202,13 +202,17 @@ const handleSaveCategory = async () => {
   setSaving(false);
   if (error) {
     alert('حدث خطأ أثناء حفظ القسم: ' + error.message);
-  } else {
-    setShowCategoryForm(false);
-    setCategoryForm({ name: '', image_url: '' });
-    supabase.from('categories').select('*').then(({ data }) => {
-      if (data) setCategories(data);
-    });
-  }
+ } else {
+  setShowCategoryForm(false);
+  setCategoryForm({ name: '', image_url: '' });
+  
+  // أضف رسالة التنبيه الفوري للزبائن هنا فوراً
+  alert('✨ تم إضافة قسم جديد إلى المتجر بنجاح وأصبح متاحاً للزبائن!');
+
+  supabase.from('categories').select('*').then(({ data }) => {
+    if (data) setCategories(data);
+  });
+}
 };
 
 // حذف قسم
@@ -306,18 +310,28 @@ const handleSaveProduct = async () => {
       console.error('خطأ التحديث:', error);
       alert('لم يتم التحديث: ' + error.message);
     }
-  } else {
+ } else {
     const { error } = await supabase.from('products').insert([data]);
     if (error) {
       console.error('خطأ الإضافة:', error);
       alert('لم يتم الإضافة: ' + error.message);
+    } else {
+      alert('✨ تم إضافة المنتج بنجاح وأصبح ظاهراً للزبائن!');
+      
+      await supabase.from('notifications').insert([{
+        title: 'منتج جديد في المتجر 📦',
+        message: 'تم إضافة منتج جديد إلى المتجر حديثاً',
+        type: 'product',
+        created_at: new Date().toISOString()
+      }]);
     }
   }
   setSaving(false);
   resetForm();
   setShowProductForm(false);
   if (onProductsChanged) onProductsChanged();
-};
+}; 
+
 const handleDeleteProduct = async (id: string) => {
   if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
   await supabase.from('products').delete().eq('id', id);
@@ -348,11 +362,14 @@ const data = {
 
   if (error) {
     alert('حدث خطأ أثناء حفظ الفيديو: ' + error.message);
-  } else {
-    setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
-    setShowVideoForm(false);
-    if (onVideosChanged) onVideosChanged();
-  }
+} else {
+  setVideoForm({ title: '', description: '', video_url: '', position: 'hero', sort_order: '0' });
+  setShowVideoForm(false);
+
+  alert('✨ تم نشر الفيديو بنجاح وأصبح ظاهراً للزبائن في المتجر!');
+
+  if (onVideosChanged) onVideosChanged();
+}
 };
 const handleSaveShowcase = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -378,21 +395,32 @@ const handleSaveShowcase = async (e?: React.FormEvent) => {
     setSaving(false);
     if (error) {
       alert('حدث خطأ أثناء حفظ الفيديو الفاخر: ' + error.message);
-    } else {
-      alert('تم حفظ الفيديو الفاخر بنجاح!');
-      setShowcaseForm({
-        title: '',
-        video_url: '',
-        price: '',
-        original_price: '',
-        brand_id: '',
-        product_id: '',
-        product_image: '',
-        rating: 5.0,
-        reviews_count: 128
-      });
-      if (onVideosChanged) onVideosChanged();
-    }
+} else {
+  alert('✨ تم حفظ الفيديو الفاخر بنجاح!');
+
+  // 1. إرسال شعار/تنبيه لجدول notifications في Supabase ليظهر للزبائن
+  await supabase.from('notifications').insert([{
+    title: '✨ فيديو فاخر جديد',
+    message: `وصل حديثاً فيديو فاخر جديد: ${showcaseForm.title.trim()}`,
+    type: 'video_showcase',
+    created_at: new Date().toISOString()
+  }]);
+
+  // 2. تصفير نموذج الإدخال
+  setShowcaseForm({
+    title: '',
+    video_url: '',
+    price: '',
+    original_price: '',
+    brand_id: '',
+    product_id: '',
+    product_image: '',
+    rating: 5.0,
+    reviews_count: 128
+  });
+
+  if (onVideosChanged) onVideosChanged();
+}
   };
 
 const handleDeleteVideo = async (id: string) => {
@@ -426,10 +454,14 @@ const handleSaveBanner = async () => {
 
   setSaving(false);
   if (!error) {
-    setShowBannerForm(false);
-    setBannerForm({ title: '', image_url: '', position: 'hero', product_id: '' });
-    const { data: updatedBanners } = await supabase.from('banners').select('*');
-    if (updatedBanners) setBanners(updatedBanners);
+setShowBannerForm(false);
+  setBannerForm({ title: '', image_url: '', position: 'hero', product_id: '' });
+  
+  // أضف هذا السطر هنا لإظهار التنبيه للزبائن والأدمن
+  alert('✨ تم حفظ البنر بنجاح وأصبح ظاهراً للزبائن في المتجر!');
+
+  const { data: updatedBanners } = await supabase.from('banners').select('*');
+  if (updatedBanners) setBanners(updatedBanners);
   } else {
     alert('حدث خطأ أثناء حفظ البنر: ' + error.message);
   }
@@ -456,13 +488,17 @@ const handleSaveBrand = async () => {
   setSaving(false);
   if (error) {
     alert('خطأ أثناء حفظ الماركة: ' + error.message);
-  } else {
-    setShowBrandForm(false);
-    setBrandForm({ name: '', image_url: '', category: 'عطور' });
-    supabase.from('brands').select('*').then(({ data }) => {
-      if (data) setBrands(data);
-    });
-  }
+ } else {
+  setShowBrandForm(false);
+  setBrandForm({ name: '', image_url: '', category: 'عطور' });
+  
+  // إشعار فوري عند إضافة ماركة جديدة
+  alert('✨ تم إضافة الماركة الجديدة بنجاح وأصبحت متاحة للزبائن في المتجر!');
+
+  supabase.from('brands').select('*').then(({ data }) => {
+    if (data) setBrands(data);
+  });
+}
 };
 
 // حذف ماركة
