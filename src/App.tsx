@@ -311,18 +311,20 @@ useEffect(() => {
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
-<CustomerProfileModal 
-  isOpen={activeNav === 'account' && !!user} 
-  onClose={() => setActiveNav('home')} 
-  user={user} 
+<CustomerProfileModal
+  isOpen={activeNav === 'account' && !!user}
+  onClose={() => setActiveNav('home')}
+  user={user}
 />
-      <AuthModal 
-        isOpen={authOpen} 
-        onClose={() => setAuthOpen(false)} 
-        onSuccess={() => {
-          showToast('تم تسجيل الدخول بنجاح!');
-        }}
-      />
+    <AuthModal
+  isOpen={authOpen}
+  onClose={() => setAuthOpen(false)}
+  onSuccess={() => {
+    setAuthOpen(false);
+    setActiveNav('account'); // الانتقال المباشر لصفحة الحساب
+    showToast('تم تسجيل الدخول بنجاح!');
+  }}
+/>
       <InstallPWA />
     </div>
   );
