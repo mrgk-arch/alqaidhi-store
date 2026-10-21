@@ -14,7 +14,7 @@ interface AdminPanelProps {
   onVideosChanged: () => void;
 }
 
-type Tab = 'products' | 'categories' | 'videos' | 'banners' | 'brands' | 'settings' | 'coupons';
+type Tab = 'products' | 'categories' | 'videos' | 'banners' | 'featured_showcase' | 'brands' | 'settings' | 'coupons' | 'bank_accounts' | 'customers';
 
 
 export default function AdminPanel({
@@ -112,7 +112,23 @@ const fetchCoupons = async () => {
   }
   setLoadingCoupons(false);
 };
+// حالة وعرض الزبائن في لوحة التحكم
+const [customers, setCustomers] = useState<any[]>([]);
 
+const fetchCustomers = async () => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (!error && data) {
+    setCustomers(data);
+  }
+};
+
+useEffect(() => {
+  fetchCustomers();
+}, []);
 // استدعاء جلب الكوبونات عند اختيار تبويب الكوبونات
 useEffect(() => {
   if (tab === 'coupons') {
@@ -518,6 +534,7 @@ return (
 { id: 'brands' as Tab, label: 'الماركات', icon: Package },
 { id: 'settings' as Tab, label: 'الإعدادات', icon: Settings },
 { id: 'coupons' as Tab, label: 'الكوبونات', icon: Ticket },
+{ id: 'customers' as Tab, label: 'الزبائن', icon: Package },
 { id: 'bank_accounts' as Tab, label: 'الحسابات البنكية', icon: Ticket },
         ].map((t) => {
           const Icon = t.icon;
@@ -533,7 +550,33 @@ return (
           );
         })}
       </div>
-
+{tab === 'customers' && (
+  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mt-4">
+    <h3 className="text-lg font-bold text-amber-400 mb-4">قائمة الزبائن المسجلين</h3>
+    <div className="overflow-x-auto">
+      <table className="w-full text-right text-slate-300 text-sm">
+        <thead>
+          <tr className="border-b border-slate-800 text-amber-500">
+            <th className="p-3">الاسم</th>
+            <th className="p-3">البريد الإلكتروني</th>
+            <th className="p-3">تاريخ الانضمام</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customers.map((c) => (
+            <tr key={c.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
+              <td className="p-3 font-medium text-slate-100">{c.full_name || 'زائر'}</td>
+              <td className="p-3">{c.email}</td>
+              <td className="p-3 text-xs text-slate-400">
+                {new Date(c.created_at).toLocaleDateString('ar-SA')}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 py-4">
 {/* Categories Tab Content */}
