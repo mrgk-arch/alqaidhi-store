@@ -312,13 +312,17 @@ useEffect(() => {
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
 <CustomerProfileModal
-  isOpen={activeNav === 'account' && !!user}
+  isOpen={activeNav === 'account' && Boolean(user)}
   onClose={() => setActiveNav('home')}
   user={user}
 />
-    <AuthModal
-  isOpen={authOpen}
-  onClose={() => setAuthOpen(false)}
+
+<AuthModal
+  isOpen={authOpen || (activeNav === 'account' && !user)}
+  onClose={() => {
+    setAuthOpen(false);
+    if (activeNav === 'account') setActiveNav('home');
+  }}
   onSuccess={() => {
     setAuthOpen(false);
     setActiveNav('account'); // الانتقال المباشر لصفحة الحساب
