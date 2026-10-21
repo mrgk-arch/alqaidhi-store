@@ -18,31 +18,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // 1. إنشاء الحساب
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: { data: { full_name: fullName } }
         });
-        if (error) throw error;
+
+        if (signUpError) throw signUpError;
+
+        // 2. إذا لم تُنشأ الجلسة فوراً، نقوم بتسجيل الدخول التلقائي في نفس اللحظة
+        if (!signUpData.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          if (signInError) {
+            if (signInError.message.includes('Email not confirmed')) {
+              throw new Error('حسابك قيد التفعيل، أو ينبغي إلغاء شرط التأكيد من إعدادات Supabase');
+            }
+            throw signInError;
+          }
+        }
       } else {
+        // تسجيل الدخول العادي
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes('Email not confirmed')) {
+            throw new Error('حسابك قيد التفعيل، أو ينبغي إلغاء شرط التأكيد من إعدادات Supabase');
+          }
+          if (error.message.includes('Invalid login credentials')) {
+            throw new Error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+          }
+          throw error;
+        }
       }
+
       onSuccess();
       onClose();
     } catch (err: any) {
-      if (err.message.includes('Invalid login credentials')) {
-        setErrorMsg('البريد الإلكتروني أو كلمة المرور غير صحيحة');
-      } else {
-        setErrorMsg(err.message || 'حدث خطأ، يرجى المحاولة لاحقاً');
-      }
+      setErrorMsg(err.message || 'حدث خطأ، يرجى المحاولة لاحقاً');
     } finally {
       setLoading(false);
     }
