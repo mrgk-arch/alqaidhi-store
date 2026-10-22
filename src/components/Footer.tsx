@@ -2,7 +2,7 @@ import { Twitter, Facebook, Instagram, MapPin, Phone, Mail, Send } from 'lucide-
 import type { StoreSettings } from '../types';
 import TikTokIcon from './TikTokIcon';
 
-const LOGO_URL = '/WhatsApp_Image_2026-09-13_at_2.20.44_PM.jpeg';
+const LOGO_URL = '/logo.png';
 
 interface FooterProps {
   settings: StoreSettings | null;
