@@ -955,16 +955,16 @@ return (
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm text-slate-200 mb-1">رابط أو ملف الفيديو</label>
-          <input
-            type="text"
-            value={showcaseForm.video_url}
-            onChange={(e) => setShowcaseForm({ ...showcaseForm, video_url: e.target.value })}
-            placeholder="رابط الفيديو المباشر أو ارفعه"
-            className="w-full p-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-200 text-sm"
-          />
-        </div>
+        <div className="space-y-2">
+  <label className="block text-sm font-medium text-slate-200 mb-1">
+    رفع ملف الفيديو الفاخر من الجهاز
+  </label>
+  <MediaUploader
+    value={showcaseForm.video_url}
+    onChange={(url: string) => setShowcaseForm({ ...showcaseForm, video_url: url })}
+    bucket="videos"
+  />
+</div>
 
         <button
           type="button"
