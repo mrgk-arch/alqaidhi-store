@@ -168,3 +168,23 @@
 .card-hover-glow:hover::before {
   opacity: 1;
 }
+
+/* Splash Screen Animations */
+@keyframes splashScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-splash-scale {
+  animation: splashScale 1.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
