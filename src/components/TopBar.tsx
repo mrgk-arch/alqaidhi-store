@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, Heart, ShoppingBag, User, Settings, Sparkles, X } from 'lucide-react';
 import type { Product } from '../types';
 
-const LOGO_URL = '/WhatsApp_Image_2026-09-13_at_2.20.44_PM.jpeg';
+const LOGO_URL = '/logo.png';
 
 interface TopBarProps {
   cartCount: number;
