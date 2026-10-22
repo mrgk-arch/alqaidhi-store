@@ -21,6 +21,7 @@ import { AuthModal } from './components/AuthModal';
 import { CustomerProfileModal } from './components/CustomerProfileModal';
 import { ProductDetails } from './components/ProductDetails';
 import InstallPWA from './components/InstallPWA';
+import { SplashScreen } from './components/SplashScreen';
 type NavigationView = 'home' | 'categories' | 'offers' | 'cart' | 'account';
 
 export default function App() {
@@ -34,7 +35,7 @@ export default function App() {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const toastIdRef = useRef(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+const [showSplash, setShowSplash] = useState(true);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -188,7 +189,9 @@ useEffect(() => {
       </div>
 
       <div className="relative">
-    <TopBar
+        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+
+        <TopBar
   cartCount={totalItems}
   onCartClick={() => setCartOpen(true)}
   onSearch={(query) => setSearchQuery(query)}
