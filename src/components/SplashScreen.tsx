@@ -9,13 +9,14 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 
   useEffect(() => {
     // التلاشي السلس بعد عرض الحركة الفاخرة
-    const timer = setTimeout(() => {
-      setFade(true);
-    }, 2400);
+   // الجديد (أسرع وأكثر سلاسة)
+const timer = setTimeout(() => {
+  setFade(true);
+}, 1200); // تبدأ بالتلاشي بعد 1.2 ثانية
 
-    const finishTimer = setTimeout(() => {
-      if (onFinish) onFinish();
-    }, 3000);
+const finishTimer = setTimeout(() => {
+  if (onFinish) onFinish();
+}, 1700); // تختفي تماماً وتفتح المتجر بعد 1.7 ثانية
 
     return () => {
       clearTimeout(timer);
