@@ -1,21 +1,21 @@
 {
-  "name": "متجر القيضي",
-  "short_name": "متجر القيضي",
-  "description": "متجر القيضي - تجربة تسوق عطور فاخرة وأرقى الماركات العالمية",
+  "name": "متجر القيضي للعود",
+  "short_name": "القيضي",
+  "description": "تجربة تسوق عطور فاخرة وأرقى الماركات العالمية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0f19",
   "theme_color": "#d4af37",
   "icons": [
     {
-      "src": "/WhatsApp_Image_2026-09-13_at_2.20.44_PM.jpeg",
+      "src": "/logo.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png"
     },
     {
-      "src": "/WhatsApp_Image_2026-09-13_at_2.20.44_PM.jpeg",
+      "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }
