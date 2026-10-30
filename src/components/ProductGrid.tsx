@@ -128,12 +128,12 @@ const filteredProducts = products.filter((product) => {
           استكشف أفخم الماركات العالمية
         </h3>
         <div className="flex flex-wrap justify-center gap-8 md:gap-10">
-          {brands
+      {brands
       .filter((brand: any) => {
         if (!brand.category || !activeCategory) return false;
         const brandCat = brand.category.trim().replace(/^ال/, '');
         const activeCat = activeCategory.trim().replace(/^ال/, '');
-        return brandCat === 'عطور' || brandCat === activeCat;
+        return brandCat === activeCat || brandCat === 'عطور' || activeCat === 'الكل' || activeCat === 'all';
       })
       .map((brand: any, idx: number) => {
               const brandIdentifier = brand.id || brand.name;
