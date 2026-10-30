@@ -480,26 +480,42 @@ useEffect(() => {
   });
 }, [settings]);
 
-// حفظ ماركة جديدة
-const handleSaveBrand = async () => {
-  if (!brandForm.name.trim() || !brandForm.image_url.trim()) return;
-  setSaving(true);
-  const { error } = await supabase.from('brands').insert([brandForm]);
-  setSaving(false);
-  if (error) {
-    alert('خطأ أثناء حفظ الماركة: ' + error.message);
- } else {
-  setShowBrandForm(false);
-  setBrandForm({ name: '', image_url: '', category: 'عطور' });
-  
-  // إشعار فوري عند إضافة ماركة جديدة
-  alert('✨ تم إضافة الماركة الجديدة بنجاح وأصبحت متاحة للزبائن في المتجر!');
+// حفظ أو تعديل ماركة
+  const handleSaveBrand = async () => {
+    if (!brandForm.name.trim() || !brandForm.image_url.trim()) return;
+    setSaving(true);
 
-  supabase.from('brands').select('*').then(({ data }) => {
-    if (data) setBrands(data);
-  });
-}
-};
+    let error;
+    if ((brandForm as any).id) {
+      const { error: err } = await supabase
+        .from('brands')
+        .update({
+          name: brandForm.name,
+          image_url: brandForm.image_url,
+          category: brandForm.category,
+        })
+        .eq('id', (brandForm as any).id);
+      error = err;
+    } else {
+      const { error: err } = await supabase.from('brands').insert([brandForm]);
+      error = err;
+    }
+
+    setSaving(false);
+    if (error) {
+      alert('حدث خطأ أثناء حفظ الماركة: ' + error.message);
+    } else {
+      setShowBrandForm(false);
+      setBrandForm({ name: '', image_url: '', category: 'عطور' } as any);
+      
+      // رسالة التنبيه الفورية التي تفضلها
+      alert('✨ تم حفظ الماركة بنجاح وأصبحت متاحة للزبائن في المتجر');
+
+      supabase.from('brands').select('*').then(({ data }) => {
+        if (data) setBrands(data);
+      });
+    }
+  };
 
 // حذف ماركة
 const handleDeleteBrand = async (id: string) => {
@@ -1403,8 +1419,13 @@ return (
                   </div>
                 <div className="flex items-center gap-1">
   <button
-    onClick={() => {
-      setBrandForm({ name: brand.name, image_url: brand.image_url, category: brand.category });
+   onClick={() => {
+      setBrandForm({
+        id: (brand as any).id,
+        name: brand.name,
+        image_url: brand.image_url,
+        category: brand.category,
+      } as any);
       setShowBrandForm(true);
     }}
     className="p-2 text-gold-400 hover:bg-gold-500/10 rounded-lg transition-colors"
