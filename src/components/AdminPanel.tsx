@@ -1343,10 +1343,10 @@ return (
           <div className="space-y-4">
             {!showBrandForm ? (
               <button
-                onClick={() => {
-                  setBrandForm({ name: '', image_url: '', category: 'عطور' });
-                  setShowBrandForm(true);
-                }}
+            onClick={() => {
+      setBrandForm({ name: '', image_url: '', category: categories[0]?.name || '' });
+      setShowBrandForm(true);
+    }}
                 className="w-full flex items-center justify-center gap-2 py-2.5 gold-gradient text-ink-900 font-bold rounded-xl text-sm"
               >
                 <Plus className="w-4 h-4" />
