@@ -480,12 +480,13 @@ useEffect(() => {
   });
 }, [settings]);
 
-// حفظ أو تعديل ماركة
+// حفظ أو تعديل ماركة (شامل ومضبوط 100%)
   const handleSaveBrand = async () => {
     if (!brandForm.name.trim() || !brandForm.image_url.trim()) return;
     setSaving(true);
 
     let error;
+    // التحقق مما إذا كان النموذج يحمل id (يعني وضع تعديل) أو جديد (وضع إضافة)
     if ((brandForm as any).id) {
       const { error: err } = await supabase
         .from('brands')
@@ -506,16 +507,19 @@ useEffect(() => {
       alert('حدث خطأ أثناء حفظ الماركة: ' + error.message);
     } else {
       setShowBrandForm(false);
-      setBrandForm({ name: '', image_url: '', category: 'عطور' } as any);
+      // إعادة تعيين النموذج مع الحفاظ على القسم الديناميكي
+      setBrandForm({ name: '', image_url: '', category: categories[0]?.name || '' } as any);
       
-      // رسالة التنبيه الفورية التي تفضلها
       alert('✨ تم حفظ الماركة بنجاح وأصبحت متاحة للزبائن في المتجر');
 
+      // تحديث قائمة الماركات مباشرة لتظهر التعديلات فوراً في لوحة التحكم
       supabase.from('brands').select('*').then(({ data }) => {
         if (data) setBrands(data);
       });
     }
   };
+
+  
 
 // حذف ماركة
 const handleDeleteBrand = async (id: string) => {
