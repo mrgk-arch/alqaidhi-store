@@ -621,8 +621,11 @@ return (
     {!showCategoryForm ? (
       <>
         <button
-          onClick={() => setShowCategoryForm(true)}
-          className="w-full flex items-center justify-center gap-2 py-2.5 gold-gradient text-ink-900 font-bold rounded-xl shadow-lg hover:opacity-95 transition-opacity"
+          onClick={() => {
+            setCategoryForm({ name: '', image_url: '' });
+            setShowCategoryForm(true);
+          }}
+          className="w-full flex items-center justify-center gap-2 p-2.5 gold-gradient text-ink-900 font-bold rounded-xl"
         >
           <Plus className="w-4 h-4" />
           إضافة قسم جديد
@@ -642,18 +645,36 @@ return (
                     className="w-12 h-12 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-lg bg-ink-700 flex items-center justify-center text-ink-500">
+                  <div className="w-12 h-12 rounded-lg bg-ink-700 flex items-center justify-center text-gold-400">
                     <Package className="w-6 h-6" />
                   </div>
                 )}
                 <h4 className="text-sm font-medium text-gold-200">{cat.name}</h4>
               </div>
-              <button
-                onClick={() => handleDeleteCategory(cat.id)}
-                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              
+              <div className="flex items-center gap-1">
+                {/* زر التعديل الجديد */}
+                <button
+                  onClick={() => {
+                    setCategoryForm({ name: cat.name, image_url: cat.image_url || '' });
+                    // سنقوم بتفعيل وضع التعديل لهذا القسم
+                    setShowCategoryForm(true);
+                  }}
+                  className="p-2 text-gold-400 hover:bg-gold-500/10 rounded-lg transition-colors"
+                  title="تعديل القسم"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+
+                {/* زر الحذف */}
+                <button
+                  onClick={() => handleDeleteCategory(cat.id)}
+                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                  title="حذف القسم"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
           {categories.length === 0 && (
@@ -664,8 +685,9 @@ return (
         </div>
       </>
     ) : (
+      // نموذج الإضافة أو التعديل
       <div className="space-y-4 animate-fade-in">
-        <h3 className="font-bold text-gold-200">إضافة قسم جديد</h3>
+        <h3 className="font-bold text-gold-200">إضافة / تعديل قسم</h3>
         <div>
           <label className="block text-xs text-ink-300 mb-1">اسم القسم</label>
           <input
@@ -673,23 +695,26 @@ return (
             placeholder="مثال: عطور، بخور..."
             value={categoryForm.name}
             onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-            className="w-full bg-ink-900/60 border border-gold-400/20 rounded-xl px-3 py-2 text-sm text-ink-100 placeholder:text-ink-500 focus:outline-none focus:border-gold-400/50"
+            className="w-full bg-ink-900/60 border border-gold-400/20 rounded-xl px-3 py-2 text-sm text-ink-100"
           />
         </div>
-        <MediaUploader
-          value={categoryForm.image_url}
-          onChange={(url) => setCategoryForm({ ...categoryForm, image_url: url })}
-          bucket="categories-images"
-          label="صورة القسم"
-        />
+        <div>
+          <label className="block text-xs text-ink-300 mb-1">صورة القسم</label>
+          <MediaUploader
+            value={categoryForm.image_url}
+            onChange={(url) => setCategoryForm({ ...categoryForm, image_url: url })}
+            bucket="categories-images"
+            label="اختر القسم"
+          />
+        </div>
         <div className="flex gap-2 pt-2">
           <button
             onClick={handleSaveCategory}
             disabled={saving}
-            className="flex-1 flex items-center justify-center gap-2 py-2 gold-gradient text-ink-900 font-medium rounded-xl text-sm disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 py-2 gold-gradient text-ink-900 font-bold rounded-xl text-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            حفظ
+            حفظ القسم
           </button>
           <button
             onClick={() => setShowCategoryForm(false)}
@@ -1376,12 +1401,25 @@ return (
                       <p className="text-xs text-gold-300">القسم: {brand.category}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDeleteBrand(brand.id)}
-                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div className="flex items-center gap-1">
+  <button
+    onClick={() => {
+      setBrandForm({ name: brand.name, image_url: brand.image_url, category: brand.category });
+      setShowBrandForm(true);
+    }}
+    className="p-2 text-gold-400 hover:bg-gold-500/10 rounded-lg transition-colors"
+    title="تعديل الماركة"
+  >
+    <Edit2 className="w-4 h-4" />
+  </button>
+  <button
+    onClick={() => handleDeleteBrand(brand.id)}
+    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+    title="حذف الماركة"
+  >
+    <Trash2 className="w-4 h-4" />
+  </button>
+</div>
                 </div>
               ))}
               {brands.length === 0 && (
