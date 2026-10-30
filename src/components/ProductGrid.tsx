@@ -41,11 +41,13 @@ const [selectedBrandFilter, setSelectedBrandFilter] = React.useState<string | nu
   }
 
 const filteredProducts = products.filter((product) => {
-    const matchesCategory =
-      !activeCategory ||
-      activeCategory === 'all' ||
-      activeCategory === 'الكل' ||
-      product.category === activeCategory;
+   const matchesCategory = 
+    !activeCategory || 
+    activeCategory === 'all' || 
+    activeCategory === 'الكل' || 
+    product.category === activeCategory ||
+    (product.category && activeCategory && 
+     product.category.trim().replace(/^ال/, '') === activeCategory.trim().replace(/^ال/, ''));
 
     // الفلترة بالماركة المختارة عبر الـ id أو الاسم بشكل دقيق وآمن
     const matchesBrand =
@@ -127,8 +129,13 @@ const filteredProducts = products.filter((product) => {
         </h3>
         <div className="flex flex-wrap justify-center gap-8 md:gap-10">
           {brands
-            .filter((brand: any) => brand.category === 'عطور' || brand.category === activeCategory)
-            .map((brand: any, idx: number) => {
+      .filter((brand: any) => {
+        if (!brand.category || !activeCategory) return false;
+        const brandCat = brand.category.trim().replace(/^ال/, '');
+        const activeCat = activeCategory.trim().replace(/^ال/, '');
+        return brandCat === 'عطور' || brandCat === activeCat;
+      })
+      .map((brand: any, idx: number) => {
               const brandIdentifier = brand.id || brand.name;
               return (
                 <div
