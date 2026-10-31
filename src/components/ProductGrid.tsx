@@ -95,28 +95,39 @@ const filteredProducts = products.filter((product) => {
           استكشف أفخم الماركات العالمية
         </h3>
         <div className="flex flex-wrap justify-center gap-8 md:gap-10">
-          {brands.map((brand: any, idx: number) => {
-            const brandIdentifier = String(brand.id || brand.name);
-            const isSelected = selectedBrandFilter === brandIdentifier;
-            return (
-              <div
-                key={brand.id || idx}
-                onClick={() => setSelectedBrandFilter(isSelected ? null : brandIdentifier)}
-                className={`cursor-pointer group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 ${isSelected ? 'scale-105' : ''}`}
-              >
-                <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 ${isSelected ? 'border-amber-400 ring-4 ring-amber-400/20' : 'border-amber-500/20 group-hover:border-amber-400'}`}>
-                  <img
-                    src={brand.image_url || brand.logo}
-                    alt={brand.name}
-                    className="w-full h-full object-cover rounded-full"
-                  />
+          {brands
+            .filter((brand: any) => {
+              if (!brand.category || !activeCategory) return false;
+              if (activeCategory === 'all' || activeCategory === 'الكل') return true;
+
+              // تنظيف الأسماء ومقارنتها بدقة (تجاهل "ال" التعريف والمسافات)
+              const brandCat = brand.category.trim().replace(/^ال/, '');
+              const activeCat = activeCategory.trim().replace(/^ال/, '');
+
+              return brandCat === activeCat || brand.category.trim() === activeCategory.trim();
+            })
+            .map((brand: any, idx: number) => {
+              const brandIdentifier = String(brand.id || brand.name);
+              const isSelected = selectedBrandFilter === brandIdentifier;
+              return (
+                <div
+                  key={brand.id || idx}
+                  onClick={() => setSelectedBrandFilter(isSelected ? null : brandIdentifier)}
+                  className={`cursor-pointer group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 ${isSelected ? 'scale-105' : ''}`}
+                >
+                  <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 ${isSelected ? 'border-amber-400 ring-4 ring-amber-400/20' : 'border-amber-500/20 group-hover:border-amber-400'}`}>
+                    <img
+                      src={brand.image_url || brand.logo}
+                      alt={brand.name}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                  <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400">
+                    {brand.name}
+                  </h4>
                 </div>
-                <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400">
-                  {brand.name}
-                </h4>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     )}
