@@ -100,11 +100,8 @@ const filteredProducts = products.filter((product) => {
               if (!brand.category || !activeCategory) return false;
               if (activeCategory === 'all' || activeCategory === 'الكل') return true;
 
-              // تنظيف الأسماء ومقارنتها بدقة (تجاهل "ال" التعريف والمسافات)
-              const brandCat = brand.category.trim().replace(/^ال/, '');
-              const activeCat = activeCategory.trim().replace(/^ال/, '');
-
-              return brandCat === activeCat || brand.category.trim() === activeCategory.trim();
+              // مقارنة مطابقة تامة بين قسم الماركة وققسم المتجر المختار
+              return brand.category.trim() === activeCategory.trim();
             })
             .map((brand: any, idx: number) => {
               const brandIdentifier = String(brand.id || brand.name);
