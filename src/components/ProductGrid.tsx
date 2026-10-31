@@ -89,81 +89,38 @@ const filteredProducts = products.filter((product) => {
 {/* ========================================================= */}
       {/* قسم الماركات الفخم والدائري - يظهر فقط في قسم العطور */}
       {/* ========================================================= */}
-{activeCategory === 'عطور' && brands && brands.length > 0 && (
-  <div>
-    {/* إذا اختار الزبون ماركة، نعرض اسمها وشعارها في المنتصف وتحتها سهم الرجوع */}
-    {selectedBrandFilter ? (
-      <div className="flex flex-col items-center justify-center my-8 bg-ink-950/60 p-6 rounded-2xl border border-gold-500/20 relative">
-        {/* زر السهم الصغير في الزاوية للخروج من الماركة */}
-        <button 
-          onClick={() => setSelectedBrandFilter(null)}
-          className="absolute top-4 left-4 bg-ink-900 border border-gold-500/30 text-gold-400 p-2 rounded-full hover:bg-gold-500 hover:text-ink-950 transition-colors flex items-center justify-center"
-          title="الرجوع للماركات"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* جلب بيانات الماركة المختارة لعرض شعارها واسمها */}
-        {(() => {
-          const currentBrand = brands.find((b: any) => String(b.id) === String(selectedBrandFilter) || b.name === selectedBrandFilter);
-          return (
-            <>
-              {currentBrand?.image_url && (
-             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold-500/40 mb-3 shadow-lg bg-ink-950">
-  <img src={currentBrand?.image_url || currentBrand?.logo} alt={currentBrand?.name} className="w-full h-full object-cover rounded-full" />
-</div>  
-              )}
-              <h3 className="text-2xl font-bold text-gold-300">{currentBrand?.name || selectedBrandFilter}</h3>
-              <p className="text-xs text-ink-300 mt-1">منتجات الماركة المختارة</p>
-            </>
-          );
-        })()}
-      </div>
-    ) : (
-      /* إذا لم يختار ماركة، تعرض له قائمة الماركات الدائرية العادية الطبيعية */
+{brands && brands.length > 0 && (
       <div className="my-12 px-2">
         <h3 className="text-3xl font-extrabold mb-10 text-center text-ink-300 tracking-tight">
           استكشف أفخم الماركات العالمية
         </h3>
         <div className="flex flex-wrap justify-center gap-8 md:gap-10">
-      {brands
-      .filter((brand: any) => {
-        if (!brand.category || !activeCategory) return false;
-        const brandCat = brand.category.trim().replace(/^ال/, '');
-        const activeCat = activeCategory.trim().replace(/^ال/, '');
-        return brandCat === activeCat || brandCat === 'عطور' || activeCat === 'الكل' || activeCat === 'all';
-      })
-      .map((brand: any, idx: number) => {
-              const brandIdentifier = brand.id || brand.name;
-              return (
-                <div
-                  key={brand.id || idx}
-                  onClick={() => {
-                    const brandIdentifier = String(brand.id);
-                    setSelectedBrandFilter(selectedBrandFilter === brandIdentifier ? null : brandIdentifier);
-                  }}
-                  className="group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
-                >
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 border-amber-500/20 group-hover:border-amber-400 group-hover:shadow-[0_0_15px_rgba(251,191,36,0.4)] transition-all duration-300 overflow-hidden">
-  <img 
-    src={brand.image_url || brand.logo}
-    alt={brand.name}
-    className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
-  />
-</div>
-                  <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400 transition-colors">
-                    {brand.name}
-                  </h4>
+          {brands.map((brand: any, idx: number) => {
+            const brandIdentifier = String(brand.id || brand.name);
+            const isSelected = selectedBrandFilter === brandIdentifier;
+            return (
+              <div
+                key={brand.id || idx}
+                onClick={() => setSelectedBrandFilter(isSelected ? null : brandIdentifier)}
+                className={`cursor-pointer group flex flex-col items-center w-28 sm:w-32 transition-all duration-300 ${isSelected ? 'scale-105' : ''}`}
+              >
+                <div className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 ${isSelected ? 'border-amber-400 ring-4 ring-amber-400/20' : 'border-amber-500/20 group-hover:border-amber-400'}`}>
+                  <img
+                    src={brand.image_url || brand.logo}
+                    alt={brand.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </div>
-              );
-            })}
+                <h4 className="mt-4 text-slate-100 font-bold text-base text-center group-hover:text-amber-400">
+                  {brand.name}
+                </h4>
+              </div>
+            );
+          })}
         </div>
       </div>
     )}
-  </div>
-)}
+ 
       
       {/* ========================================================= */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
