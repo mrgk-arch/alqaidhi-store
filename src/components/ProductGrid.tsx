@@ -32,6 +32,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onBannerClick
 }) => {
   const [selectedBrandFilter, setSelectedBrandFilter] = useState<string | null>(null);
+  // إلغاء تفعيل فلتر الماركة تلقائياً عند تغيير القسم لتجنب تعليق الشاشة
+  React.useEffect(() => {
+    setSelectedBrandFilter(null);
+  }, [activeCategory]);
   const middleBanners = banners.filter((b) => b.position === 'middle' || !b.position);
 
   if (loading) {
