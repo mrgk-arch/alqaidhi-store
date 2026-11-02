@@ -485,8 +485,8 @@ useEffect(() => {
     if (!brandForm.name.trim() || !brandForm.image_url.trim()) return;
     setSaving(true);
 
-    let error;
-    // التحقق مما إذا كان النموذج يحمل id (يعني وضع تعديل) أو جديد (وضع إضافة)
+    let error = null;
+    // إذا كان الماركة لها id فهذا يعني أننا نعدل ماركة موجودة
     if ((brandForm as any).id) {
       const { error: err } = await supabase
         .from('brands')
@@ -498,6 +498,7 @@ useEffect(() => {
         .eq('id', (brandForm as any).id);
       error = err;
     } else {
+      // إذا لم يكن لها id فهذه إضافة ماركة جديدة
       const { error: err } = await supabase.from('brands').insert([brandForm]);
       error = err;
     }
@@ -507,11 +508,9 @@ useEffect(() => {
       alert('حدث خطأ أثناء حفظ الماركة: ' + error.message);
     } else {
       setShowBrandForm(false);
-      // إعادة تعيين النموذج مع الحفاظ على القسم الديناميكي
       setBrandForm({ name: '', image_url: '', category: categories[0]?.name || '' } as any);
+      alert('تم حفظ الماركة بنجاح وأصبحت متاحة للزبائن في المتجر');
       
-      alert('✨ تم حفظ الماركة بنجاح وأصبحت متاحة للزبائن في المتجر');
-
       // تحديث قائمة الماركات مباشرة لتظهر التعديلات فوراً في لوحة التحكم
       supabase.from('brands').select('*').then(({ data }) => {
         if (data) setBrands(data);

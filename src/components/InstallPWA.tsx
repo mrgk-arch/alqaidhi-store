@@ -47,7 +47,7 @@ export default function InstallPWA() {
         className="gold-gradient text-ink-900 font-bold px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border border-gold-300/40 hover:scale-105 transition-transform"
       >
         <Download className="w-5 h-5 animate-pulse" />
-        <span className="text-sm">تثبيت تطبيق القيضي</span>
+        <span className="text-sm">تثبيت تطبيق متجرالقيضي</span>
         <Sparkles className="w-4 h-4" />
       </button>
     </div>
