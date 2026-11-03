@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import type { Banner } from '../types';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -33,8 +33,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 }) => {
   const [selectedBrandFilter, setSelectedBrandFilter] = useState<string | null>(null);
 
-  // تصفير فلتر الماركة عند تغيير القسم
-  React.useEffect(() => {
+  // إعادة ضبط الماركة عند تغيير القسم
+  useEffect(() => {
     setSelectedBrandFilter(null);
   }, [activeCategory]);
 
@@ -80,46 +80,46 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-      {/* إذا تم اختيار ماركة: عرض شريط الماركة في الوسط في أعلى المنتجات */}
+      {/* 1. حالة اختيار الماركة: إخفاء الأقسام وعرض الهيدر الأنيق في المنتصف */}
       {selectedBrandFilter ? (
-        <div className="w-full mb-8">
-          <div className="flex items-center justify-between bg-ink-900 border-2 border-amber-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-md">
+        <div className="w-full mb-6 dir-rtl">
+          <div className="flex items-center justify-between bg-ink-900/90 border border-amber-500/30 rounded-2xl p-3 sm:p-4 shadow-xl backdrop-blur-md">
             
-            {/* زر العودة للماركات مع السهم */}
-            <button
-              onClick={() => setSelectedBrandFilter(null)}
-              className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-bold bg-amber-500/10 px-4 py-2 rounded-xl transition-all"
-            >
-              <span>العودة للماركات</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-
-            {/* اسم الماركة وشعارها في المنتصف */}
+            {/* جهة اليمين: الشعار واسم الماركة */}
             <div className="flex items-center gap-3">
-              <span className="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                {selectedBrandObj?.name || 'الماركة'}
-              </span>
               {selectedBrandObj?.image_url && (
                 <img
                   src={selectedBrandObj.image_url}
                   alt={selectedBrandObj.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-amber-400 shadow-sm shrink-0"
                 />
               )}
+              <span className="text-base sm:text-lg font-bold text-white tracking-wide truncate max-w-[140px] sm:max-w-none">
+                {selectedBrandObj?.name || 'الماركة'}
+              </span>
             </div>
+
+            {/* جهة اليسار: زر العودة للماركات */}
+            <button
+              onClick={() => setSelectedBrandFilter(null)}
+              className="flex items-center gap-1.5 text-amber-400 hover:text-amber-300 font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-xs sm:text-sm px-3 py-2 rounded-xl transition-all shrink-0 border border-amber-500/20"
+            >
+              <span>العودة للماركات</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
           </div>
         </div>
       ) : (
-        /* إذا لم يتم اختيار ماركة: عرض قائمة الماركات الخاصة بالقسم فقط */
+        /* 2. حالة عدم اختيار ماركة: عرض الماركات التابعة للقسم المختاري فقط */
         activeCategory && activeCategory !== 'all' && activeCategory !== 'الكل' && brands && brands.length > 0 && (
-          <div className="my-8 px-2">
-            <h3 className="text-3xl font-extrabold mb-8 text-center text-ink-300 tracking-tight">
-              استكشف أفخم الماركات العالمية
+          <div className="my-6 px-2">
+            <h3 className="text-2xl font-bold mb-6 text-center text-amber-400 tracking-tight">
+              تصفح ماركات القسم
             </h3>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {brands
                 .filter((brand: any) => {
                   if (!brand.category || !activeCategory) return false;
@@ -134,16 +134,16 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                         setSelectedBrandFilter(brandIdentifier);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      className="cursor-pointer group flex flex-col items-center w-28 sm:w-32 transition-all duration-300"
+                      className="cursor-pointer group flex flex-col items-center w-20 sm:w-24 transition-all duration-300"
                     >
-                      <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ink-950 border-2 border-amber-500/20 group-hover:border-amber-400 shadow-xl overflow-hidden transition-all duration-300 group-hover:scale-105">
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-ink-950 border border-amber-500/30 group-hover:border-amber-400 shadow-md overflow-hidden transition-all duration-300 group-hover:scale-105">
                         <img
                           src={brand.image_url || brand.logo}
                           alt={brand.name}
                           className="w-full h-full object-cover rounded-full"
                         />
                       </div>
-                      <h4 className="mt-3 text-slate-100 font-bold text-base text-center group-hover:text-amber-400">
+                      <h4 className="mt-2 text-slate-200 font-medium text-xs sm:text-sm text-center group-hover:text-amber-400 line-clamp-1">
                         {brand.name}
                       </h4>
                     </div>
@@ -154,26 +154,26 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         )
       )}
 
-      {/* عنوان القسم أو نتائج البحث */}
-      <h2 className="text-2xl font-bold mb-6 text-right text-amber-400">
+      {/* عنوان التصفح */}
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-right text-amber-400">
         {selectedBrandFilter
-          ? `منتجات ماركة: ${selectedBrandObj?.name || ''}`
+          ? `منتجات ${selectedBrandObj?.name || 'الماركة'}`
           : searchQuery
           ? `نتائج البحث عن "${searchQuery}"`
           : activeCategory === 'all' || activeCategory === 'الكل'
-          ? 'المنتجات'
+          ? 'جميع المنتجات'
           : `قسم: ${activeCategory}`}
       </h2>
 
-      {/* في حال عدم وجود منتجات للماركة أو القسم */}
+      {/* عرض المنتجات أو التنبيه في حال عدم وجود منتجات */}
       {(!filteredProducts || filteredProducts.length === 0) ? (
-        <div className="max-w-7xl mx-auto px-4 py-12 text-center text-gray-400 font-medium">
-          {searchQuery ? `لا توجد نتائج بحث تطابق "${searchQuery}"` : 'لا توجد منتجات متوفرة حالياً لهذه الماركة أو القسم.'}
+        <div className="max-w-7xl mx-auto px-4 py-12 text-center text-gray-400 font-medium bg-ink-900/40 rounded-2xl border border-slate-800">
+          {searchQuery ? `لا توجد نتائج بحث تطابق "${searchQuery}"` : 'لا توجد منتجات متوفرة حالياً لخياراتك الحالية.'}
         </div>
       ) : (
         <>
-          {/* النصف الأول من المنتجات */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+          {/* شبكة المنتجات - الجزء الأول */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mt-4">
             {firstHalf.map((product: any, idx: number) => (
               <ProductCard
                 key={product.id || product._id || idx}
@@ -185,7 +185,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             ))}
           </div>
 
-          {/* البنرات الإعلانية في المنتصف */}
+          {/* البنرات الإعلانية الوسطى (تختفي عند تصفح ماركة محددة لتصفية الشاشة) */}
           {middleBanners && middleBanners.length > 0 && !selectedBrandFilter && (
             <div className="my-8 w-full overflow-hidden rounded-2xl shadow-xl">
               <Swiper
@@ -194,7 +194,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 pagination={{ clickable: true }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
                 loop={true}
-                className="myswiper w-full h-60 md:h-80 rounded-2xl"
+                className="myswiper w-full h-48 sm:h-64 md:h-80 rounded-2xl"
               >
                 {middleBanners.map((banner, index) => (
                   <SwiperSlide key={banner.id || index} className="relative w-full h-full">
@@ -218,9 +218,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             </div>
           )}
 
-          {/* النصف الثاني من المنتجات */}
+          {/* شبكة المنتجات - الجزء الثاني */}
           {secondHalf.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mt-4">
               {secondHalf.map((product: any, idx: number) => (
                 <ProductCard
                   key={product.id || product._id || idx}
