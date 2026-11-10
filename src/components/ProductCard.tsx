@@ -122,31 +122,49 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({ product, onAddToC
         {/* السعر وزر السلة */}
         <div className="flex items-center justify-between gap-2 pt-2 border-t border-ink-800">
           <div>
-            <span className="text-base lg:text-lg font-bold text-gold-300">
-              {product.price} ر.س
-            </span>
-            {product.old_price && (
-              <span className="text-xs text-ink-400 line-through block">
-                {product.old_price} ر.س
-              </span>
-            )}
-          </div>
+         <span className="text-base lg:text-lg font-bold text-gold-300">
+  {(() => {
+    const currency = (window as any).currentCurrency || 'SAR';
+    const rate = Number((window as any).storeExchangeRate) || 530;
+    
+    if (currency === 'YER') {
+      const converted = Math.round(Number(product.price) * rate);
+      return `${converted.toLocaleString()} ر.ي`;
+    }
+    return `${product.price} ر.س`;
+  })()}
+</span>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart(product);
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-gold-100 rounded-xl shadow-md transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline text-xs">إضافة للسلة</span>
-          </button>
-        </div>
+{product.old_price && (
+  <span className="text-xs text-ink-400 line-through block">
+    {(() => {
+      const currency = (window as any).currentCurrency || 'SAR';
+      const rate = Number((window as any).storeExchangeRate) || 530;
+      
+      if (currency === 'YER') {
+        const convertedOld = Math.round(Number(product.old_price) * rate);
+        return `${convertedOld.toLocaleString()} ر.ي`;
+      }
+      return `${product.old_price} ر.س`;
+    })()}
+  </span>
+)}
+</div>
+
+<button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart(product);
+          }}
+          className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-900/30 active:scale-95"
+        >
+          <Plus className="w-4 h-4" />
+          <span className="hidden sm:inline text-xs">إضافة للسلة</span>
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
 });
-
 ProductCard.displayName = 'ProductCard';
 export default ProductCard;
