@@ -122,14 +122,11 @@ useEffect(() => {
     return `${numericPrice} ر.س`;
   };
 
-// الاستماع لحدث تغيير العملة لتحديث الأسعار بسلاسة دون تعليق الشاشة
+// استخدام حالة محلية لتحديث واجهة الأسعار فوراً عند اختيار العملة
+  const [, setForceUpdate] = useState({});
   useEffect(() => {
     const handleCurrencyChange = () => {
-      // إجبار إعادة رندر خفيفة للأسعار بدون إعادة تحميل كاملة أو تعليق الشاشة الترحيبية
-      const currentRate = (window as any).currentCurrency;
-      if (currentRate) {
-        (window as any).currentCurrency = currentRate;
-      }
+      setForceUpdate({}); // إعادة رندر سريعة ونظيفة للأسعار بدون تداخل
     };
     window.addEventListener('currencyChange0', handleCurrencyChange);
     return () => window.removeEventListener('currencyChange0', handleCurrencyChange);

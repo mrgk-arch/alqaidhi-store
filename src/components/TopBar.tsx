@@ -131,18 +131,48 @@ const mobileSuggestionsRef = useRef<HTMLDivElement>(null);
                 {mobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
 
-{/* زر تبديل العملة (رمز مصغر وأنيق بجانب البحث) */}
-<button 
-  onClick={() => {
-    const newCurrency = (window as any).currentCurrency === 'YER' ? 'SAR' : 'YER';
-    (window as any).currentCurrency = newCurrency;
-    window.dispatchEvent(new Event('currencyChange0'));
-  }}
-  className="w-10 h-10 rounded-full hover:bg-amber-500/20 border border-amber-500/30 bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs font-bold transition-all shadow-sm"
-  title="تغيير العملة"
->
-  <span>{(window as any).currentCurrency === 'YER' ? '﷼' : 'SAR'}</span>
-</button>
+{/* زر تبديل العملة المنسدل بأيقونة دائرية أنيقة */}
+<div className="relative">
+  <button 
+    onClick={() => {
+      const dropdown = document.getElementById('currency-dropdown');
+      if (dropdown) dropdown.classList.toggle('hidden');
+    }}
+    className="w-10 h-10 rounded-full hover:bg-amber-500/20 border border-amber-500/30 bg-amber-500/10 text-amber-400 flex items-center justify-center transition-all shadow-sm"
+    title="تحديد العملة"
+  >
+    {/* أيقونة العملة الدائرية المطابقة لطلبك */}
+    <div className="w-6 h-6 rounded-full border border-amber-500/50 flex items-center justify-center bg-amber-500/20 text-xs font-bold">
+      $
+    </div>
+  </button>
+
+  {/* قائمة الخيارات المنسدلة لاختيار العملة (مشابهة لشكل القائمة الأخيرة) */}
+  <div id="currency-dropdown" className="hidden absolute left-0 mt-2 w-44 bg-zinc-900 border border-amber-500/30 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+    <button
+      onClick={() => {
+        (window as any).currentCurrency = 'SAR';
+        window.dispatchEvent(new Event('currencyChange0'));
+        document.getElementById('currency-dropdown')?.classList.add('hidden');
+      }}
+      className="w-full px-4 py-2.5 text-right text-xs font-bold text-slate-200 hover:bg-amber-500/20 hover:text-amber-400 flex items-center justify-between transition-colors border-b border-zinc-800"
+    >
+      <span>الريال السعودي 🇸🇦</span>
+      <span className="w-3 h-3 rounded-full border border-amber-500 flex items-center justify-center text-[8px]">{(window as any).currentCurrency === 'SAR' ? '●' : ''}</span>
+    </button>
+    <button
+      onClick={() => {
+        (window as any).currentCurrency = 'YER';
+        window.dispatchEvent(new Event('currencyChange0'));
+        document.getElementById('currency-dropdown')?.classList.add('hidden');
+      }}
+      className="w-full px-4 py-2.5 text-right text-xs font-bold text-slate-200 hover:bg-amber-500/20 hover:text-amber-400 flex items-center justify-between transition-colors"
+    >
+      <span>الريال اليمني 🇾🇪</span>
+      <span className="w-3 h-3 rounded-full border border-amber-500 flex items-center justify-center text-[8px]">{(window as any).currentCurrency === 'YER' ? '●' : ''}</span>
+    </button>
+  </div>
+</div>
               <button
                 onClick={onCartClick}
                 className="w-10 h-10 rounded-full hover:bg-gold-400/10 flex items-center justify-center text-slate-300 relative transition-colors"
