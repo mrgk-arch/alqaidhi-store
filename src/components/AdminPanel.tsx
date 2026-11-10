@@ -69,13 +69,14 @@ const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
 });
   const [isSavingShowcase, setIsSavingShowcase] = useState(false);
   // Settings form state
-  const [settingsForm, setSettingsForm] = useState({
-    whatsapp_number: '967779392061',
-    tiktok_url: '',
-    twitter_url: '',
-    facebook_url: '',
-    instagram_url: '',
-  });
+ const [settingsForm, setSettingsForm] = useState({
+  whatsapp_number: '967779392061',
+  exchange_rate: '530', // سعر الصرف الافتراضي
+  tiktok_url: '',
+  twitter_url: '',
+  facebook_url: '',
+  instagram_url: ''
+});
 
   // Banners state
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -240,13 +241,14 @@ const handleDeleteCategory = async (id: string) => {
   setCategories(categories.filter((c) => c.id !== id));
 };
   useEffect(() => {
-    if (settings) {
+if (settings) {
       setSettingsForm({
         whatsapp_number: settings.whatsapp_number || '967779392061',
+        exchange_rate: (settings as any).exchange_rate || '530',
         tiktok_url: settings.tiktok_url || '',
         twitter_url: settings.twitter_url || '',
         facebook_url: settings.facebook_url || '',
-        instagram_url: settings.instagram_url || '',
+        instagram_url: settings.instagram_url || ''
       });
     }
 
@@ -1613,6 +1615,16 @@ return (
               <input type="text" value={settingsForm.whatsapp_number} onChange={(e) => setSettingsForm({ ...settingsForm, whatsapp_number: e.target.value })} dir="ltr" className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-ink-50 focus:outline-none focus:border-gold-400/40 text-right" />
             </div>
             <div>
+             <div>
+  <label className="text-sm text-ink-200 mb-1 block">سعر صرف الريال اليمني (مقابل 1 ريال سعودي)</label>
+  <input 
+    type="number" 
+    value={settingsForm.exchange_rate || '530'} 
+    onChange={(e) => setSettingsForm({ ...settingsForm, exchange_rate: e.target.value })}
+    placeholder="مثلاً: 530"
+    className="w-full bg-ink-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-amber-500"
+  />
+</div> 
               <label className="text-sm text-ink-200 mb-1 block">رابط تيك توك</label>
               <input type="text" value={settingsForm.tiktok_url} onChange={(e) => setSettingsForm({ ...settingsForm, tiktok_url: e.target.value })} dir="ltr" className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-ink-50 focus:outline-none focus:border-gold-400/40 text-right" />
             </div>

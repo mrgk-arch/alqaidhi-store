@@ -131,10 +131,17 @@ const mobileSuggestionsRef = useRef<HTMLDivElement>(null);
                 {mobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
 
-              <button className="w-10 h-10 rounded-full hover:bg-gold-400/10 flex items-center justify-center text-slate-300 transition-colors">
-                <Heart className="w-5 h-5" />
-              </button>
-
+           <button 
+  onClick={() => {
+    const newCurrency = (window as any).currentCurrency === 'YER' ? 'SAR' : 'YER';
+    (window as any).currentCurrency = newCurrency;
+    window.dispatchEvent(new Event('currencyChange0'));
+  }}
+  className="flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-full text-xs font-bold transition-all"
+  title="تغيير العملة"
+>
+  <span>العملة: {(window as any).currentCurrency === 'YER' ? 'ريال يمني 🇾🇪' : 'ريال سعودي 🇸🇦'}</span>
+</button>
               <button
                 onClick={onCartClick}
                 className="w-10 h-10 rounded-full hover:bg-gold-400/10 flex items-center justify-center text-slate-300 relative transition-colors"

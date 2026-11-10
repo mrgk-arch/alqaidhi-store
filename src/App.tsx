@@ -109,7 +109,27 @@ useEffect(() => {
     totalItems,
     totalPrice,
   } = useCart();
+// دالة تحويل وعرض السعر بالعملة المختارة (سعودي / يمني) بناءً على سعر الصرف
+  const formatPrice = (priceInSAR: number | string) => {
+    const numericPrice = typeof priceInSAR === 'string' ? parseFloat(priceInSAR) || 0 : priceInSAR;
+    const currency = (window as any).currentCurrency || 'SAR';
+    const rate = Number((settings as any)?.exchange_rate) || 530;
 
+    if (currency === 'YER') {
+      const convertedPrice = Math.round(numericPrice * rate);
+      return `${convertedPrice.toLocaleString()} ر.ي`;
+    }
+    return `${numericPrice} ر.س`;
+  };
+
+  // إعادة تحديث المتجر عند تغيير العملة من الزر العلوي
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      window.location.reload(); // تحديث سريع للصفحة لتطبيق العملة الجديدة بكل الأقسام بسلاسة
+    };
+    window.addEventListener('currencyChange0', handleCurrencyChange);
+    return () => window.removeEventListener('currencyChange0', handleCurrencyChange);
+  }, []);
   const handleBannerClick = (banner: Banner) => {
     const bannerData = banner as any;
     if (bannerData && bannerData.product_id) {
