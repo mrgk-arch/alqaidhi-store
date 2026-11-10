@@ -69,15 +69,22 @@ const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
 });
   const [isSavingShowcase, setIsSavingShowcase] = useState(false);
   // Settings form state
- const [settingsForm, setSettingsForm] = useState({
+const [settingsForm, setSettingsForm] = useState({
   whatsapp_number: '967779392061',
-  exchange_rate: '530', // سعر الصرف الافتراضي
+ exchange_rate: (settings as any)?.exchange_rate ? String((settings as any).exchange_rate) : '530',
   tiktok_url: '',
   twitter_url: '',
   facebook_url: '',
   instagram_url: ''
 });
-
+useEffect(() => {
+  if ((settings as any)?.exchange_rate) {
+    setSettingsForm(prev => ({
+      ...prev,
+     exchange_rate: String((settings as any).exchange_rate)
+    }));
+  }
+}, [settings]);
   // Banners state
   const [banners, setBanners] = useState<Banner[]>([]);
   const [showBannerForm, setShowBannerForm] = useState(false);
@@ -1616,14 +1623,15 @@ return (
             </div>
             <div>
              <div>
-  <label className="text-sm text-ink-200 mb-1 block">سعر صرف الريال اليمني (مقابل 1 ريال سعودي)</label>
-  <input 
-    type="number" 
-    value={settingsForm.exchange_rate || '530'} 
-    onChange={(e) => setSettingsForm({ ...settingsForm, exchange_rate: e.target.value })}
-    placeholder="مثلاً: 530"
-    className="w-full bg-ink-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-amber-500"
-  />
+<label className="block text-sm text-ink-200 mb-1">سعر صرف الريال اليمني (مقابل 1 ريال سعودي)</label>
+<input
+  type="text"
+  inputMode="numeric"
+  value={settingsForm.exchange_rate}
+  onChange={(e) => setSettingsForm({ ...settingsForm, exchange_rate: e.target.value })}
+  placeholder="أدخل سعر الصرف، مثلاً 530"
+  className="w-full bg-ink-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-amber-500"
+/>
 </div> 
               <label className="text-sm text-ink-200 mb-1 block">رابط تيك توك</label>
               <input type="text" value={settingsForm.tiktok_url} onChange={(e) => setSettingsForm({ ...settingsForm, tiktok_url: e.target.value })} dir="ltr" className="w-full bg-ink-700/60 border border-gold-400/15 rounded-xl px-4 py-2.5 text-sm text-ink-50 focus:outline-none focus:border-gold-400/40 text-right" />

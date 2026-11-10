@@ -31,6 +31,7 @@ export interface Video {
 export interface StoreSettings {
   id: number;
   whatsapp_number: string;
+  exchange_rate?: number | string; // <--- أضف هذا السطر هنا
   tiktok_url: string | null;
   twitter_url: string | null;
   facebook_url: string | null;
