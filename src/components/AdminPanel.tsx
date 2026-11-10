@@ -30,7 +30,9 @@ export default function AdminPanel({
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
   const [saving, setSaving] = useState(false);
-
+const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
+  const [customerOrders, setCustomerOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
   // Product form state
   const [form, setForm] = useState({
     name: '',
@@ -125,7 +127,23 @@ const fetchCustomers = async () => {
     setCustomers(data);
   }
 };
+const handleSelectCustomer = async (customer: any) => {
+    setSelectedCustomer(customer);
+    setLoadingOrders(true);
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .or(`email.eq.${customer.email},user_id.eq.${customer.id}`);
 
+      if (error) throw error;
+      setCustomerOrders(data || []);
+    } catch (err) {
+      console.error('خطأ في جلب طلبات الزبون:', err);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 useEffect(() => {
   fetchCustomers();
 }, []);
@@ -606,8 +624,10 @@ return (
         })}
       </div>
 {tab === 'customers' && (
-  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mt-4">
+  <div className="bg-ink-900 border border-slate-800 rounded-2xl p-6 mt-4">
     <h3 className="text-lg font-bold text-amber-400 mb-4">قائمة الزبائن المسجلين</h3>
+    <p className="text-xs text-slate-400 mb-4">اضغط على أي زبون لعرض تفاصيل حسابه، موقعه، وسجل طلباته كاملة.</p>
+    
     <div className="overflow-x-auto">
       <table className="w-full text-right text-slate-300 text-sm">
         <thead>
@@ -615,15 +635,25 @@ return (
             <th className="p-3">الاسم</th>
             <th className="p-3">البريد الإلكتروني</th>
             <th className="p-3">تاريخ الانضمام</th>
+            <th className="p-3 text-center">الإجراء</th>
           </tr>
         </thead>
         <tbody>
-          {customers.map((c) => (
-            <tr key={c.id} className="border-b border-slate-800/50 hover:bg-slate-800/30">
+{customers.map((c: any) => (
+            <tr 
+              key={c.id || c.email} 
+              onClick={() => handleSelectCustomer(c)}
+              className="border-b border-slate-800/50 hover:bg-slate-800/60 cursor-pointer transition-colors"
+            >
               <td className="p-3 font-medium text-slate-100">{c.full_name || 'زائر'}</td>
-              <td className="p-3">{c.email}</td>
+              <td className="p-3 text-slate-300">{c.email}</td>
               <td className="p-3 text-xs text-slate-400">
-                {new Date(c.created_at).toLocaleDateString('ar-SA')}
+                {c.created_at ? new Date(c.created_at).toLocaleDateString('ar-SA') : 'غير متوفر'}
+              </td>
+              <td className="p-3 text-center">
+                <span className="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-lg border border-amber-500/20">
+                  عرض الطلبات
+                </span>
               </td>
             </tr>
           ))}
@@ -1605,6 +1635,80 @@ return (
           </div>
         )}
       </div>
+{selectedCustomer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="bg-ink-900 border border-amber-500/30 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl dir-rtl text-right">
+            
+            {/* رأس النافذة */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-white">{selectedCustomer.full_name || 'تفاصيل الزبون'}</h3>
+                <p className="text-xs text-amber-400 mt-1">{selectedCustomer.email}</p>
+              </div>
+              <button
+                onClick={() => setSelectedCustomer(null)}
+                className="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-full transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* معلومات التوصيل والموقع */}
+            <div className="bg-ink-950 p-4 rounded-2xl border border-slate-800 mb-6">
+              <h4 className="text-sm font-bold text-amber-400 mb-2">معلومات التوصيل والموقع:</h4>
+              <p className="text-xs text-slate-300">
+                <span className="text-slate-400">العنوان: </span>
+                {selectedCustomer.address || selectedCustomer.city || 'لم يتم تحديد عنوان تفصيلي'}
+              </p>
+              <p className="text-xs text-slate-300 mt-1">
+                <span className="text-slate-400">تاريخ الانضمام: </span>
+                {selectedCustomer.created_at ? new Date(selectedCustomer.created_at).toLocaleDateString('ar-SA') : 'غير متوفر'}
+              </p>
+            </div>
+
+            {/* سجل الطلبيات والمشتريات */}
+            <h4 className="text-base font-bold text-white mb-3">سجل الطلبيات والمشتريات:</h4>
+            
+            {loadingOrders ? (
+              <p className="text-center text-amber-400 py-6 text-sm">جاري جلب سجل الطلبات...</p>
+            ) : customerOrders.length === 0 ? (
+              <p className="text-center text-slate-400 py-6 text-sm bg-ink-950 rounded-2xl border border-slate-800">لا توجد طلبات مسجلة لهذا الزبون حتى الآن.</p>
+            ) : (
+              <div className="space-y-4">
+                {customerOrders.map((order: any, idx: number) => (
+                  <div key={order.id || idx} className="bg-ink-950 border border-slate-800 rounded-2xl p-4">
+                    <div className="flex justify-between items-center border-b border-slate-800/60 pb-2 mb-2 text-xs">
+                      <span className="text-amber-400 font-bold">طلب رقم #{order.id?.slice(0, 6) || idx + 1}</span>
+                      <span className="text-slate-400">{order.created_at ? new Date(order.created_at).toLocaleDateString('ar-SA') : ''}</span>
+                    </div>
+                    
+                    <div className="text-xs text-slate-300 space-y-1 mb-3">
+                      <p><span className="text-slate-400">المنتجات: </span>{order.items_summary || order.products_list || 'منتجات متجر القيضي'}</p>
+                      <p><span className="text-slate-400">حالة الطلب: </span><span className="text-emerald-400 font-bold">{order.status || 'مكتمل'}</span></p>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-800/40 text-sm">
+                      <span className="text-slate-400 text-xs">الإجمالي الكلي:</span>
+                      <span className="text-amber-400 font-extrabold">{order.total_amount || order.total || 0} ر.س</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* زر الإغلاق */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setSelectedCustomer(null)}
+                className="bg-amber-500 hover:bg-amber-400 text-ink-950 px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-lg"
+              >
+                إغلاق
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   </div>
  );
