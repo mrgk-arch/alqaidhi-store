@@ -36,6 +36,17 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
   onAddToCart, 
   onBack, 
 }) => { 
+  const formatPrice = (priceInSAR: number | string) => {
+    const numericPrice = typeof priceInSAR === 'string' ? parseFloat(priceInSAR) || 0 : priceInSAR;
+    const currency = (window as any).currentCurrency || 'SAR';
+    const rate = Number((window as any).storeExchangeRate) || 530;
+    
+    if (currency === 'YER') {
+      const convertedPrice = Math.round(numericPrice * rate);
+      return `${convertedPrice.toLocaleString()} ر.ي`;
+    }
+    return `${numericPrice} ر.س`;
+  };
   // تجميع كافة الصور المتوفرة للمنتج 
   const productImages = [
     product.image_url || product.image,
@@ -93,12 +104,12 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
       <div className="p-5 border-b border-gray-100"> 
         <h1 className="text-2xl font-black text-slate-900 mb-3">{product.name}</h1> 
         <div className="flex items-center gap-3"> 
-          <span className="text-2xl font-bold text-amber-600">{product.price} ر.س</span> 
-          {product.originalPrice && ( 
-            <span className="text-sm text-gray-400 line-through"> 
-              {product.originalPrice} ر.س 
-            </span> 
-          )} 
+       <span className="text-2xl font-bold text-amber-600">{formatPrice(product.price)}</span>
+{product.originalPrice && (
+  <span className="text-sm text-gray-400 line-through">
+    {formatPrice(product.originalPrice)}
+  </span>
+)}
         </div> 
       </div> 
  
@@ -176,7 +187,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-4 z-20"> 
         <div> 
           <span className="block text-xs text-gray-400">الإجمالي</span> 
-          <span className="text-xl font-black text-amber-600">{product.price} ر.س</span> 
+         <span className="text-xl font-black text-amber-600">{formatPrice(product.price)}</span>
         </div> 
         <button 
           onClick={() => onAddToCart && onAddToCart(product)} 
