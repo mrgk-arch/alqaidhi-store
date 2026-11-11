@@ -12,6 +12,17 @@ interface CheckoutModalProps {
   whatsappNumber: string;
   onOrderSent: () => void;
 }
+const formatPrice = (priceInSAR: number | string) => {
+  const numericPrice = typeof priceInSAR === 'string' ? parseFloat(priceInSAR) || 0 : priceInSAR;
+  const currency = (window as any).currentCurrency || 'SAR';
+  const rate = Number((window as any).storeExchangeRate) || 530;
+  
+  if (currency === 'YER') {
+    const convertedPrice = Math.round(numericPrice * rate);
+    return `${convertedPrice.toLocaleString()} ر.ي`;
+  }
+  return `${numericPrice} ر.س`;
+};
 
 export default function CheckoutModal({
   open,
@@ -182,17 +193,17 @@ const finalTotal = totalPrice - discountAmount + shipping;
                 {items.map((item) => (
                   <div key={item.product.id} className="flex justify-between text-sm text-slate-300">
                     <span className="line-clamp-1">{item.product.name} × {item.quantity}</span>
-                    <span className="text-amber-300 shrink-0 mr-2">{item.product.price * item.quantity} ر.س</span>
+                   <span className="text-amber-300 shrink-0 mr-2">{formatPrice(item.product.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
               <div className="pt-2 mt-2 border-t border-amber-500/10 flex justify-between text-sm">
                 <span className="text-slate-300">الشحن</span>
-                <span className="text-slate-200">{shipping === 0 ? 'مجاني' : `${shipping} ر.س`}</span>
+                <span className="text-slate-200">{shipping === 0 ? 'مجاني' : formatPrice(shipping)}</span>
               </div>
               <div className="flex justify-between text-base font-bold pt-1">
                 <span className="text-amber-200">الإجمالي</span>
-                <span className="text-amber-300">{finalTotal} ر.س</span>
+                <span className="text-amber-300">{formatPrice(finalTotal)}</span>
               </div>
             </div>
 {/* قسم كود الخصم */}
