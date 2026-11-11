@@ -557,7 +557,10 @@ const handleDeleteBrand = async (id: string) => {
 const handleSaveSettings = async () => {
   try {
     setSaving(true);
-    const payload: Record<string, any> = { id: 1 };
+    const payload: Record<string, any> = { 
+      id: 1,
+      exchange_rate: Number(settingsForm.exchange_rate) || 530 
+    };
 
     if (settingsForm.whatsapp_number) payload.whatsapp_number = settingsForm.whatsapp_number;
     if (settingsForm.tiktok_url) payload.tiktok_url = settingsForm.tiktok_url;
@@ -568,6 +571,7 @@ const handleSaveSettings = async () => {
     const { error } = await supabase
       .from('store_settings')
       .upsert(payload, { onConflict: 'id' });
+
 
     if (error) {
       const fallbackPayload = {
