@@ -113,7 +113,7 @@ useEffect(() => {
   const formatPrice = (priceInSAR: number | string) => {
     const numericPrice = typeof priceInSAR === 'string' ? parseFloat(priceInSAR) || 0 : priceInSAR;
     const currency = (window as any).currentCurrency || 'SAR';
-    const rate = Number((settings as any)?.exchange_rate) || 530;
+    const rate = Number((settings as any)?.exchange_rate) || Number((window as any).storeExchangeRate) || Number(localStorage.getItem('store_exchange_rate')) || 410;
 
     if (currency === 'YER') {
       const convertedPrice = Math.round(numericPrice * rate);
