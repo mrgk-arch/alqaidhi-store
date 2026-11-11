@@ -109,12 +109,14 @@ useEffect(() => {
     totalItems,
     totalPrice,
   } = useCart();
-// دالة تحويل وعرض السعر بالعملة المختارة (سعودي / يمني) بناءً على سعر الصرف
+// دالة تحويل وعرض السعر بالعملة المختارة بناءً على سعر الصرف من لوحة التحكم مباشرة
   const formatPrice = (priceInSAR: number | string) => {
     const numericPrice = typeof priceInSAR === 'string' ? parseFloat(priceInSAR) || 0 : priceInSAR;
     const currency = (window as any).currentCurrency || 'SAR';
-    const rate = Number((settings as any)?.exchange_rate) || Number((window as any).storeExchangeRate) || Number(localStorage.getItem('store_exchange_rate')) || 410;
-
+    
+    // سحب سعر الصرف ديناميكياً من لوحة التحكم (settings) فوراً
+    const rate = Number(settings?.exchange_rate) || Number((window as any).storeExchangeRate) || 410;
+    
     if (currency === 'YER') {
       const convertedPrice = Math.round(numericPrice * rate);
       return `${convertedPrice.toLocaleString()} ر.ي`;
