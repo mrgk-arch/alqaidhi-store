@@ -133,6 +133,14 @@ useEffect(() => {
     window.addEventListener('currencyChange0', handleCurrencyChange);
     return () => window.removeEventListener('currencyChange0', handleCurrencyChange);
   }, []);
+  useEffect(() => {
+    if ((settings as any)?.exchange_rate) {
+      const dbRate = Number((settings as any).exchange_rate);
+      (window as any).storeExchangeRate = dbRate;
+      localStorage.setItem('store_exchange_rate', String(dbRate));
+      setForceUpdate({});
+    }
+  }, [settings]);
   const handleBannerClick = (banner: Banner) => {
     const bannerData = banner as any;
     if (bannerData && bannerData.product_id) {

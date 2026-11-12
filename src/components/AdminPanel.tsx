@@ -555,44 +555,51 @@ const handleDeleteBrand = async (id: string) => {
 };
 
 const handleSaveSettings = async () => {
-  try {
-    setSaving(true);
-    const payload: Record<string, any> = { 
-      id: 1,
-      exchange_rate: Number(settingsForm.exchange_rate) || 530 
-    };
-
-    if (settingsForm.whatsapp_number) payload.whatsapp_number = settingsForm.whatsapp_number;
-    if (settingsForm.tiktok_url) payload.tiktok_url = settingsForm.tiktok_url;
-    if (settingsForm.twitter_url) payload.twitter_url = settingsForm.twitter_url;
-    if (settingsForm.facebook_url) payload.facebook_url = settingsForm.facebook_url;
-    if (settingsForm.instagram_url) payload.instagram_url = settingsForm.instagram_url;
-
-    const { error } = await supabase
-      .from('store_settings')
-      .upsert(payload, { onConflict: 'id' });
-
-
-    if (error) {
-      const fallbackPayload = {
+    try {
+      setSaving(true);
+      const currentRate = Number(settingsForm.exchange_rate) || 410;
+      
+      const payload: Record<string, any> = {
         id: 1,
-        whatsapp_number: settingsForm.whatsapp_number || '',
+        exchange_rate: currentRate,
       };
-      const { error: fallbackError } = await supabase
+
+      if (settingsForm.whatsapp_number) payload.whatsapp_number = settingsForm.whatsapp_number;
+      if (settingsForm.tiktok_url) payload.tiktok_url = settingsForm.tiktok_url;
+      if (settingsForm.twitter_url) payload.twitter_url = settingsForm.twitter_url;
+      if (settingsForm.facebook_url) payload.facebook_url = settingsForm.facebook_url;
+      if (settingsForm.instagram_url) payload.instagram_url = settingsForm.instagram_url;
+
+      const { error } = await supabase
         .from('store_settings')
-        .upsert(fallbackPayload, { onConflict: 'id' });
+        .upsert(payload, { onConflict: 'id' });
 
-      if (fallbackError) throw fallbackError;
+      if (error) {
+        const fallbackPayload = {
+          id: 1,
+          whatsapp_number: settingsForm.whatsapp_number || '',
+          exchange_rate: currentRate,
+        };
+        const { error: fallbackError } = await supabase
+          .from('store_settings')
+          .upsert(fallbackPayload, { onConflict: 'id' });
+
+        if (fallbackError) throw fallbackError;
+      }
+
+      // تحديث سعر الصرف فوراً في الذاكرة لتتحدث الأسعار في كل المتجر دون إعادة تحميل
+      (window as any).storeExchangeRate = currentRate;
+      localStorage.setItem('store_exchange_rate', String(currentRate));
+      window.dispatchEvent(new Event('currencyChange0'));
+
+      alert('✨ تم حفظ الإعدادات بنجاح!');
+    } catch (err: any) {
+      console.error('خطأ أثناء حفظ الإعدادات:', err);
+      alert('حدث خطأ أثناء الحفظ: ' + (err.message || 'يرجى التأكد من البيانات'));
+    } finally {
+      setSaving(false);
     }
-
-    alert('تم حفظ الإعدادات بنجاح! ✨');
-  } catch (err: any) {
-    console.error('خطأ أثناء حفظ الإعدادات:', err);
-    alert('حدث خطأ أثناء الحفظ: ' + (err.message || 'يرجى التأكد من البيانات'));
-  } finally {
-    setSaving(false);
-  }
-};
+  };
 
 if (!open) return null;
 

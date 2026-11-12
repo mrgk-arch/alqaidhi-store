@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({ product, onAddToC
          <span className="text-base lg:text-lg font-bold text-gold-300">
   {(() => {
     const currency = (window as any).currentCurrency || 'SAR';
-    const rate = Number((window as any).storeExchangeRate) || 530;
+    const rate = Number((window as any).storeExchangeRate) || Number(localStorage.getItem('store_exchange_rate')) || 410;
     
     if (currency === 'YER') {
       const converted = Math.round(Number(product.price) * rate);
@@ -139,7 +139,7 @@ export const ProductCard: React.FC<ProductCardProps> = memo(({ product, onAddToC
   <span className="text-xs text-ink-400 line-through block">
     {(() => {
       const currency = (window as any).currentCurrency || 'SAR';
-      const rate = Number((window as any).storeExchangeRate) || 530;
+      const rate = Number((window as any).storeExchangeRate) || Number(localStorage.getItem('store_exchange_rate')) || 410;
       
       if (currency === 'YER') {
         const convertedOld = Math.round(Number(product.old_price) * rate);
